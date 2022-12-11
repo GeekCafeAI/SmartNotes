@@ -3,7 +3,9 @@ from typing import TYPE_CHECKING, List, Optional
 if TYPE_CHECKING:
     from .datastore import HasEngineProtocol
 else:
-    class HasEngineProtocol: ...
+
+    class HasEngineProtocol:
+        ...
 
 
 import enum

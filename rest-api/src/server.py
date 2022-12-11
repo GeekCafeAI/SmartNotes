@@ -1,6 +1,10 @@
+import logging
+import os
+
 from flask import Flask, jsonify, request
 from src.datastore import Datastore
 from src.mock_worker import get_tags
+from src.utils import setup_logger
 
 # create the app
 app = Flask(__name__)
@@ -8,6 +12,9 @@ app = Flask(__name__)
 DB_URL = "sqlite:///SmartNotes.db"
 datastore = Datastore(DB_URL)
 datastore.create_all_tables()
+
+setup_logger()
+logger = logging.getLogger(__name__)
 
 
 def bad_request(message, status_code=404):
