@@ -1,4 +1,3 @@
-import argparse
 from datetime import datetime
 import openai
 
@@ -24,7 +23,6 @@ Response = str
 class Record(TypedDict):
     date: Optional[datetime]
     tags: list[str]
-    input: str
 
 
 def get_response(prompt: str, model: str, temperature: float = 0.0,
@@ -75,24 +73,12 @@ def finalize_tags(raw_tags: list[str], prompt_placeholders: list[str], models: l
     return [x.lower() for x in tags]
 
 
-def get_tags_and_date(sentence: str, model: str) -> Record:
+def get_tags_and_date(sentence: str, model: str = 'text-davinci-003') -> Record:
+    with open('key.key', 'r') as f:
+        openai.api_key = f.read()
     response = get_initial_response(sentence, INITIAL_PROMPT_PLACEHOLDER, model=model)
     raw_tags = response2tags(response)
     raw_tags, date = split_tags_from_date(raw_tags, '%Y-%m-%d %H:%M')
     tags = finalize_tags(raw_tags, PROCESSING_TAGS_PLACEHOLDERS, PROCESSING_MODELS)
-    record: Record = {'input': sentence, 'date': date, 'tags': tags}
+    record: Record = {'date': date, 'tags': tags}
     return record
-
-
-if __name__ == "__main__":
-    with open('key.key', 'r') as f:
-        openai.api_key = f.read()
-    # parser = argparse.ArgumentParser(description='Get tags and date from a sentence using several GPT3 requests.')
-    # parser.add_argument('-s', '--sentence', required=True, type=str,
-    #                     help='The sentence from which to extract tags.')
-    # args = parser.parse_args()
-    # answer = get_tags_and_date(args.sentence)
-    question = "need to buy tomatoes until today's evening"
-    init_model = 'text-davinci-003'
-    answer = get_tags_and_date(question, init_model)
-    print(answer)

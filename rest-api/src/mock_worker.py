@@ -1,5 +1,6 @@
 import logging
 import time
+from gpt3 import get_tags_and_date
 
 import dramatiq
 from src.datastore.datastore import Datastore
@@ -27,8 +28,9 @@ def get_tags_sync(datastore, request_id, text):
     datastore.start_text_tagging(request_id)
     
     # TODO: change to GPT3 function
-    result = " ".join(text.split(" ")[:5]) 
-    time.sleep(1)
+    record = get_tags_and_date(text)
+    tags = record['tags']
+    result = ','.join(tags)
     ####
 
     datastore.complete_text_tagging(request_id, result)
