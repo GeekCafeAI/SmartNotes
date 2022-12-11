@@ -40,6 +40,10 @@ class TaggedText(BaseTable):
 
 
 class TaggedTextMixin(HasEngineProtocol):
+    def get_all_texts(self) -> List[TaggedText]:
+        with Session(self.engine, expire_on_commit=False) as session:
+            return session.query(TaggedText).all()        
+    
     def get_text_tagging(self, id: int) -> Optional[TaggedText]:
         with Session(self.engine, expire_on_commit=False) as session:
             tagged_text: TaggedText = session.get(TaggedText, id)

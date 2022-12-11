@@ -5,7 +5,7 @@ import dramatiq
 from src.datastore.datastore import Datastore
 from src.utils import setup_logger
 
-DB_URL = "sqlite:////Users/ilyalasy/dev/SmartNotes/SmartNotes.db"  # TODO: move to postgre, store path in ENV vars
+DB_URL = "sqlite:///../../../SmartNotes.db"  # TODO: move to postgre, store path in ENV vars
 datastore = Datastore(DB_URL)
 
 setup_logger()
@@ -20,3 +20,17 @@ def get_tags(request_id, text):
     result = " ".join(text.split(" ")[:5])  # TODO: change to list
     datastore.complete_text_tagging(request_id, result)
     logger.info("Finished calculation")
+
+
+def get_tags_sync(datastore, request_id, text):    
+    logger.info("Started calculation")
+    datastore.start_text_tagging(request_id)
+    
+    # TODO: change to GPT3 function
+    result = " ".join(text.split(" ")[:5]) 
+    time.sleep(1)
+    ####
+
+    datastore.complete_text_tagging(request_id, result)
+    logger.info("Finished calculation")
+    return result

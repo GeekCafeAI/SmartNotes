@@ -2,7 +2,7 @@ import logging
 
 from flask import Flask, jsonify, request
 from src.datastore import Datastore
-from src.mock_worker import get_tags
+from src.mock_worker import get_tags, get_tags_sync
 from src.utils import setup_logger
 
 # create the app
@@ -21,6 +21,12 @@ def bad_request(message, status_code=404):
     response.status_code = status_code
     return response
 
+@app.get("/all")
+def all_get():
+    all_texts = datastore.get_all_texts()    
+    return {
+        "notes": [t.to_dict() for t in all_texts]
+    }
 
 @app.get("/classify")
 def classify_get():
@@ -32,7 +38,7 @@ def classify_get():
     if tagged_text is None:
         return bad_request(f"No request found by id: {request_id}")
 
-    return tagged_text.to_dict()
+    
 
 
 @app.post("/classify")
@@ -42,11 +48,19 @@ def classify_post():
         return bad_request("'text' is required!")
 
     tagged_text = datastore.create_text_tagging(data_json["text"])
-    get_tags.send(
-        tagged_text.id, data_json["text"]
-    )  # Start as a background task
+    
+    # TODO: Look inside
+    get_tags_sync(datastore, tagged_text.id,data_json["text"])
 
-    return {
-        "message": "Successfully started calculation",
-        "id": tagged_text.id,
-    }
+    tagged_text = datastore.get_text_tagging(tagged_text.id)
+    
+    ## Uncomment for message queue
+    # get_tags.send(
+    #     tagged_text.id, data_json["text"]
+    # )  # Start as a background task
+    # return {
+    #     "message": "Successfully started calculation",
+    #     "id": tagged_text.id,
+    # }
+    
+    return tagged_text.to_dict()
