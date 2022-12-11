@@ -73,14 +73,12 @@ class TaggedTextMixin(HasEngineProtocol):
     def complete_text_tagging(
         self, id: int, tags: str
     ) -> Optional[TaggedText]:
-        dt_now = datetime.now(tz=timezone.utc)
-        tagged_text = None
-        with Session(self.engine) as session:
+        dt_now = datetime.now(tz=timezone.utc)        
+        with Session(self.engine, expire_on_commit=False) as session:
             tagged_text: TaggedText = session.get(TaggedText, id)
             if tagged_text is not None:
                 tagged_text.status = TagStatus.COMPLETED
                 tagged_text.updated_at = dt_now
                 tagged_text.tags = tags
-                session.commit()
-                tagged_text = tagged_text.to_dict()
+                session.commit()                
         return tagged_text
