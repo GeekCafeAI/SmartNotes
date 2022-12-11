@@ -3,3 +3,4 @@ SQLAlchemy==2.0.0b4
 dramatiq==1.13.0
 black==22.12.0
 isort==5.10.1
+openai==0.25.0

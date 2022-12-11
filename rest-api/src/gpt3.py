@@ -1,7 +1,7 @@
 from datetime import datetime
 import openai
 
-from typing import TypedDict, Optional
+from typing import List, Tuple, TypedDict, Optional
 
 
 INITIAL_PROMPT_PLACEHOLDER = ("I will give you a sentence using which you need to generate 1-3 tags useful for "
@@ -22,7 +22,7 @@ Response = str
 
 class Record(TypedDict):
     date: Optional[datetime]
-    tags: list[str]
+    tags: List[str]
 
 
 def get_response(prompt: str, model: str, temperature: float = 0.0,
@@ -45,16 +45,16 @@ def get_initial_response(sentence: str, prompt_placeholder: str, model: str) -> 
     return get_response(prompt, model=model)
 
 
-def response2tags(response: Response) -> list[str]:
+def response2tags(response: Response) -> List[str]:
     tags = [x.strip() for x in response.split(',')]  # TODO: rewrite to work with actual responses
     return tags
 
 
-def tags2input(tags: list[str]) -> str:
+def tags2input(tags: List[str]) -> str:
     return ', '.join(tags)
 
 
-def split_tags_from_date(raw_tags: list[str], date_format: str = '%Y-%m-%d %H:%M') -> (list[str], Optional[datetime]):
+def split_tags_from_date(raw_tags: List[str], date_format: str = '%Y-%m-%d %H:%M') -> Tuple[List[str], Optional[datetime]]:
     last_tag = raw_tags[-1]
     try:
         date = datetime.strptime(last_tag, date_format)
@@ -65,7 +65,7 @@ def split_tags_from_date(raw_tags: list[str], date_format: str = '%Y-%m-%d %H:%M
     return tags, date
 
 
-def finalize_tags(raw_tags: list[str], prompt_placeholders: list[str], models: list[str]) -> list[str]:
+def finalize_tags(raw_tags: List[str], prompt_placeholders: List[str], models: List[str]) -> List[str]:
     tags = raw_tags
     for placeholder, model in zip(prompt_placeholders, models):
         response = get_response(placeholder.format(tags=tags2input(tags)), model=model)

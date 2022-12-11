@@ -1,10 +1,10 @@
 import logging
 import time
-from gpt3 import get_tags_and_date
 
 import dramatiq
 from src.datastore.datastore import Datastore
 from src.utils import setup_logger
+from src.gpt3 import get_tags_and_date
 
 DB_URL = "sqlite:///../../../SmartNotes.db"  # TODO: move to postgre, store path in ENV vars
 datastore = Datastore(DB_URL)
