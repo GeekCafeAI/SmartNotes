@@ -29,11 +29,9 @@ class TaggedText(BaseTable):
 
 class TaggedTextMixin(HasEngineProtocol):
     def get_text_tagging(self,id:int) -> Optional[TaggedText]: 
-        with Session(self.engine) as session:
+        with Session(self.engine,expire_on_commit=False) as session:
             tagged_text: TaggedText = session.get(TaggedText,id)
-            if tagged_text is not None:
-                return tagged_text.to_dict()
-        return None
+        return tagged_text
 
     def create_text_tagging(self,text:str) -> TaggedText:        
         dt_now = datetime.now(tz=timezone.utc)
@@ -44,23 +42,20 @@ class TaggedTextMixin(HasEngineProtocol):
             status = TagStatus.PENDING
         )
 
-        dict_result = None
-        with Session(self.engine) as session:
+        with Session(self.engine,expire_on_commit=False) as session:
             session.add(tagged_text)
             session.commit()
-            dict_result = tagged_text.to_dict()
-        return dict_result
+        return tagged_text
 
     def start_text_tagging(self,id:int) -> Optional[TaggedText]:        
         dt_now = datetime.now(tz=timezone.utc)
         tagged_text = None
-        with Session(self.engine) as session:
+        with Session(self.engine,expire_on_commit=False) as session:
             tagged_text: TaggedText = session.get(TaggedText,id)
             if tagged_text is not None:
                 tagged_text.status = TagStatus.IN_PROGRESS
                 tagged_text.updated_at = dt_now 
                 session.commit()
-                tagged_text = tagged_text.to_dict()
         return tagged_text  
 
     def complete_text_tagging(self,id:int,tags:str) -> Optional[TaggedText]:        

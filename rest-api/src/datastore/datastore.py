@@ -45,7 +45,6 @@ class Datastore(TaggedTextMixin):
             )
 
         self._engine: Optional[Engine] = None
-        self.create_all_tables()
             
     @property
     def engine(self) -> Tuple[Engine]:
