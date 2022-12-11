@@ -1,11 +1,10 @@
-import os
 import logging
-
-from typing import Optional, Tuple, Protocol
+import os
+from typing import Optional, Protocol, Tuple
 from urllib.parse import urlparse
 
-from sqlalchemy.engine import Engine
 from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
 from src.datastore.base_model import BaseTable
 from src.datastore.tagged_text import TaggedTextMixin
 
@@ -14,7 +13,9 @@ logger = logging.getLogger(__name__)
 
 class HasEngineProtocol(Protocol):
     @property
-    def engine(self) -> Tuple[Engine]: ...
+    def engine(self) -> Tuple[Engine]:
+        ...
+
 
 class Datastore(TaggedTextMixin):
     """
@@ -25,8 +26,8 @@ class Datastore(TaggedTextMixin):
         self,
         database_url: str = None,
         echo: bool = False,
-        profile_queries:bool=False,
-        pool_size: int = 5
+        profile_queries: bool = False,
+        pool_size: int = 5,
     ):
 
         self.database_url = database_url
@@ -45,7 +46,7 @@ class Datastore(TaggedTextMixin):
             )
 
         self._engine: Optional[Engine] = None
-            
+
     @property
     def engine(self) -> Tuple[Engine]:
         if self._engine is None:
@@ -63,13 +64,11 @@ class Datastore(TaggedTextMixin):
                 future=True,
                 pool_size=self.pool_size,
                 pool_pre_ping=True,
-            )            
+            )
             logger.info(
                 f"Initialized connection pool of size {self.pool_size}."
-            )        
+            )
         return self._engine
-
 
     def create_all_tables(self):
         BaseTable.metadata.create_all(self.engine)
-
