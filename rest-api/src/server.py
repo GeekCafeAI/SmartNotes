@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request,render_template
 from src.datastore import Datastore
 from src.mock_worker import get_tags_sync
 from src.utils import setup_logger
@@ -20,6 +20,11 @@ def bad_request(message, status_code=404):
     response = jsonify({"message": message})
     response.status_code = status_code
     return response
+
+@app.route("/")
+def index():    
+    return render_template('index.html')
+
 
 @app.get("/all")
 def all_get():

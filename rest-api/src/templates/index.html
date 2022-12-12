@@ -1,0 +1,11 @@
+<!doctype html>
+
+<h1 id="server-is-working-properly-">Server is working properly!</h1>
+<h2 id="endpoints">Endpoints</h2>
+<h3 id="post-classify-">POST &quot;/classify&quot;</h3>
+<p>Receives JSON: <code>{&quot;text&quot;:&lt;Text of the note&gt;}</code></p>
+<p>Response JSON: <code>{&quot;id&quot;:&lt;request_id&gt;,&quot;message&quot;}</code></p>
+<h3 id="get-classify-id-request_id-">GET &quot;/classify?id=&lt;request_id&gt;&quot;</h3>
+<p>Response JSON: <code>{&quot;id&quot;,&quot;text&quot;,&quot;tags&quot;,&quot;status&quot;,&quot;created_at&quot;,&quot;updated_at&quot;}</code></p>
+<h3 id="get-all-">GET &quot;/all&quot;</h3>
+<p>Response JSON: <code>{&quot;notes&quot;: [&lt;list of same dicts as in /classify &gt;]</code></p>
