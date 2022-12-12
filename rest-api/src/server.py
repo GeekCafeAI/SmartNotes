@@ -2,7 +2,7 @@ import logging
 
 from flask import Flask, jsonify, request
 from src.datastore import Datastore
-from src.mock_worker import get_tags, get_tags_sync
+from src.mock_worker import get_tags_sync
 from src.utils import setup_logger
 
 # create the app
