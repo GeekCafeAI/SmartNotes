@@ -52,12 +52,12 @@ def tags2input(tags: List[str]) -> str:
 
 
 def split_tags_from_date(response: Response) -> Tuple[str, Optional[datetime]]:
-    date = search_dates(response, languages=['en'])[0]  # TODO: change language by user's preference, or auto-detect
+    date = search_dates(response, languages=['en'])  # TODO: change language by user's preference, or auto-detect
     if date is None:
         return response, None
     else:
-        response_wo_date = response.replace(date[0], '')
-        return response_wo_date, date[1]
+        response_wo_date = response.replace(date[0][0], '')
+        return response_wo_date, date[0][1]
 
 
 def finalize_tags_with_gpt3(raw_tags: List[str], prompt_placeholders: List[str], models: List[str]) -> List[str]:
