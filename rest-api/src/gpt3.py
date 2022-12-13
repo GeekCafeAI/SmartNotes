@@ -4,9 +4,10 @@ from dateparser.search import search_dates
 from typing import List, Tuple, TypedDict, Optional
 
 
-INITIAL_PROMPT_PLACEHOLDER = ("Generate up to 3 categories from a given sentence. Categories should be comma-separated."
-                              "A sentence that reminds of any event should have 'reminder' category."
-                              "Sentence: {sentence}")
+INITIAL_PROMPT_PLACEHOLDER = ("Generate up to 3 categories from a given text. Categories should be comma-separated."
+                              "Text that reminds of any event should get 'reminder' category. "
+                              "End categories with '###'."
+                              "Text: {sentence}")
 PROCESSING_TAGS_PLACEHOLDERS = []
 
 PROCESSING_MODELS = []
@@ -21,7 +22,7 @@ class Record(TypedDict):
 
 def get_response(prompt: str, model: str, temperature: float = 0.0, frequency_penalty: float = 0.0,
                  presence_penalty: float = 0.0, top_p: float = 0.0, logprobs: int = 1,
-                 max_tokens: int = 16) -> Response:
+                 max_tokens: int = 64) -> Response:
     answer = openai.Completion.create(
         model=model,
         prompt=prompt,
@@ -30,10 +31,11 @@ def get_response(prompt: str, model: str, temperature: float = 0.0, frequency_pe
         top_p=top_p,
         frequency_penalty=frequency_penalty,
         presence_penalty=presence_penalty,
-        logprobs=logprobs
+        logprobs=logprobs,
+        stop='###'
     )
     responses = [answer['choices'][i]['text'].split('\n\n')[1].strip() for i in range(logprobs)]
-    return responses[0]  # TODO: filter responses instead of choosing the with one
+    return responses[0]  # TODO: filter responses instead of choosing the first one
 
 
 def get_initial_response(sentence: str, prompt_placeholder: str, model: str) -> Response:
@@ -44,7 +46,7 @@ def get_initial_response(sentence: str, prompt_placeholder: str, model: str) -> 
 
 def response2tags(response: Response) -> List[str]:
     tags = [x.strip() for x in response.split(',')]
-    return tags
+    return [x for x in tags if x]
 
 
 def tags2input(tags: List[str]) -> str:
@@ -56,6 +58,7 @@ def split_tags_from_date(response: Response) -> Tuple[str, Optional[datetime]]:
     if date is None:
         return response, None
     else:
+        # TODO: currently hardcoded to get first date only - get all dates and try to join them
         response_wo_date = response.replace(date[0][0], '')
         return response_wo_date, date[0][1]
 
