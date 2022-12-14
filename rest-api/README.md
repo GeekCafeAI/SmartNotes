@@ -48,4 +48,5 @@ Content type: plain
 Payload parameters: `{"id":<id of the note>,"user_id":<String that identifies the user>}`
 
 Response JSON: `{"message":<str>,"note":<note entity>}` (If id is found)
+
 Response JSON: `{"message":<str>,"notes":[<note entity1>,<note entity2>,...]}` (If id is not found)
