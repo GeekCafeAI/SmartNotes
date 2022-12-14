@@ -23,9 +23,9 @@ logger = logging.getLogger(__name__)
 #     logger.info("Finished calculation")
 
 
-def get_tags_sync(datastore, request_id, text):    
+def get_tags_sync(datastore:Datastore, request_id:int, user_id:str, text:str):    
     logger.info("Started calculation")
-    datastore.start_text_tagging(request_id)
+    datastore.start_note_tagging(request_id,user_id)
     
     # TODO: change to GPT3 function
     record = get_tags_and_date(text)
@@ -33,6 +33,6 @@ def get_tags_sync(datastore, request_id, text):
     result = ','.join(tags)
     ####
 
-    datastore.complete_text_tagging(request_id, result)
+    datastore.complete_note_tagging(request_id, user_id,result)
     logger.info("Finished calculation")
     return result

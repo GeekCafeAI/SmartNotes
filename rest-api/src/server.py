@@ -1,4 +1,5 @@
 import logging
+from typing import List, Optional
 
 from flask import Flask, jsonify, request,render_template
 from src.datastore import Datastore
@@ -16,48 +17,78 @@ setup_logger()
 logger = logging.getLogger(__name__)
 
 
-def bad_request(message, status_code=404):
-    response = jsonify({"message": message})
+def bad_request(message:Optional[str]=None, missing_args:Optional[List[str]]=None,status_code=404):
+    send_message = ""
+    if missing_args:
+        send_message = f"Required arguments {missing_args} are empty!"
+    if message:
+        send_message+= f" {message}"
+    response = jsonify({"message": send_message})
     response.status_code = status_code
     return response
+
+def get_request_data(args_list:List[str]):
+    data = {}
+    if request.content_type and request.content_type.startswith('application/json'):
+        data = request.get_json()
+    else:
+        data = request.args.to_dict()
+    logger.info(data)
+    missing_args = []
+    for arg in args_list:
+        if arg not in data:
+            missing_args.append(arg)
+    return data, missing_args
+    
 
 @app.route("/")
 def index():    
     return render_template('index.html')
 
 
-@app.get("/all")
-def all_get():
-    all_texts = datastore.get_all_texts()    
-    return {
-        "notes": [t.to_dict() for t in all_texts]
-    }
+@app.get("/notes")
+def notes_get():
+    data, missing_args = get_request_data(["user_id"])
+    if missing_args:
+        return bad_request(missing_args=missing_args)
+    
+    if "id" in data:        
+        note = datastore.get_note(data["id"],data["user_id"]) 
+        if note is None:
+            return bad_request(f"No note found by parameters: {data}")
+        
+        return {"message":"Successfully retrieved note!","note":note.to_dict()}
+    else:
+        all_texts = datastore.get_all_notes(data["user_id"])    
+        return {"message":"Successfully retrieved notes!","notes": [t.to_dict() for t in all_texts]}
+        
 
-@app.get("/classify")
-def classify_get():
-    request_id = request.args.get("id", default=None, type=int)
-    if request_id is None:
-        return bad_request("'id' is required!")
+@app.put("/notes")
+def notes_put():
+    data, missing_args = get_request_data(["id","user_id"])
 
-    tagged_text = datastore.get_text_tagging(request_id)
-    if tagged_text is None:
-        return bad_request(f"No request found by id: {request_id}")
-
+    if missing_args:
+        return bad_request(missing_args=missing_args)
+    
+    note = datastore.edit_note(data["id"],data["user_id"],data) 
+    if note is None:
+        return bad_request(f"Cannot update note with requested parameters")
+    
+    return {"message":"Successfully updated note!","note":note.to_dict()}
     
 
+@app.post("/notes")
+def notes_post():
+    data, missing_args = get_request_data(["text","user_id"])
+    if missing_args:
+        return bad_request(missing_args=missing_args)
 
-@app.post("/classify")
-def classify_post():
-    data_json = request.get_json()
-    if "text" not in data_json:
-        return bad_request("'text' is required!")
-
-    tagged_text = datastore.create_text_tagging(data_json["text"])
+    note = datastore.create_note(data["text"],data["user_id"])
     
     # TODO: Look inside
-    get_tags_sync(datastore, tagged_text.id,data_json["text"])
+    get_tags_sync(datastore, note.id,data["user_id"], data["text"])
 
-    tagged_text = datastore.get_text_tagging(tagged_text.id)
+    note = datastore.get_note(note.id,data["user_id"])
     
     ## Uncomment for message queue
     # get_tags.send(
@@ -68,4 +99,4 @@ def classify_post():
     #     "id": tagged_text.id,
     # }
     
-    return tagged_text.to_dict()
+    return {"message":"Successfully created note!","note":note.to_dict()}

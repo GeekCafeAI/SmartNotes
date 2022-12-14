@@ -17,7 +17,7 @@ PROCESSING_TAGS_PLACEHOLDERS = []
 PROCESSING_MODELS = []
 
 Response = str
-Tags = list[str]
+Tags = List[str]
 
 
 class Record(TypedDict):
