@@ -10,8 +10,7 @@ PATH_TO_KEY_FILE = Path().resolve() / Path("rest-api", "src", "key.key")
 INITIAL_PROMPT_PLACEHOLDER = ("Generate up to 3 categories from a given text. Categories should be comma-separated."
                               "Text that reminds of any event should get 'reminder' category. "
                               "Add a separate category for date there is any mention of it. "
-                              "End categories with '###'."
-                              "Text: {sentence}")
+                              "End categories with '###'. Text: {sentence}")
 
 PROCESSING_TAGS_PLACEHOLDERS = []
 PROCESSING_MODELS = []
