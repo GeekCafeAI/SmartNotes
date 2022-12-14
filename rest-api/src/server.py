@@ -100,3 +100,17 @@ def notes_post():
     # }
     
     return {"message":"Successfully created note!","note":note.to_dict()}
+
+@app.delete("/notes")
+def notes_delete():
+    data, missing_args = get_request_data(["id","user_id"])
+
+    if missing_args:
+        return bad_request(missing_args=missing_args)
+    
+    note = datastore.delete_note(data["id"],data["user_id"]) 
+    if note is None:
+        return bad_request(f"Cannot delete note with requested parameters")
+    
+    return {"message":"Successfully deleted note!","note":note.to_dict()}
+    

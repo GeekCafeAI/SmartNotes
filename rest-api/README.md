@@ -50,3 +50,12 @@ Payload parameters: `{"id":<id of the note>,"user_id":<String that identifies th
 Response JSON: `{"message":<str>,"note":<note entity>}` (If id is found)
 
 Response JSON: `{"message":<str>,"notes":[<note entity1>,<note entity2>,...]}` (If id is not found)
+
+### DELETE "/notes?id=`<int>`&user_id=`<str>`"
+Deletes one note by id.
+
+Content type: plain
+
+Payload parameters: `{"id":<id of the note>,"user_id":<String that identifies the user>}`
+
+Response JSON: `{"message":<str>,"note":<deleted note entity>}`
