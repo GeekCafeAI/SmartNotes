@@ -8,16 +8,44 @@
     2. `flask --app rest-api/src/server run`
 ## Endpoints
 
-### POST "/classify"
+### Note entity
 
-Receives JSON: `{"text":<Text of the note>}`
+```
+    id: int
+    user_id: str
+    status: str
+    text: str
+    tags: comma-separated str
+    extracted_date: datetime
+    created_at: datetime
+    updated_at: datetime
+```
 
-Response JSON: `{"id":<request_id>,"message"}`
+### POST "/notes"
+Creates new note.
 
-### GET "/classify?id=<request_id>"
+Content type: application/json.
 
-Response JSON: `{"id","text","tags","status","created_at","updated_at"}`
+Payload parameters: `{"text":<Text of the note>,"user_id":<String that identifies the user>}`
 
-### GET "/all"
+Response JSON: `{"message":<str>,"note":<note entity>}`
 
-Response JSON: `{"notes": [<list of same dicts as in /classify >]`
+### PUT "/notes"
+
+Edit note by its id.
+
+Content type: application/json.
+
+Payload parameters: `{"id":<id of the note>,"user_id":<String that identifies the user>,"text","tags","extracted_date"}`
+
+Response JSON: `{"message":<str>,"note":<edited note entity>}`
+
+### GET "/notes?id=`<int>`&user_id=`<str>`"
+Returns one note by id or, if id is empty, returns all notes.
+
+Content type: plain
+
+Payload parameters: `{"id":<id of the note>,"user_id":<String that identifies the user>}`
+
+Response JSON: `{"message":<str>,"note":<note entity>}` (If id is found)
+Response JSON: `{"message":<str>,"notes":[<note entity1>,<note entity2>,...]}` (If id is not found)
