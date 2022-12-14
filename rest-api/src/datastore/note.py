@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Sequence
 if TYPE_CHECKING:
     from .datastore import HasEngineProtocol
 else:
+
     class HasEngineProtocol:
         ...
 
@@ -45,22 +46,27 @@ class Note(BaseTable):
         default=True, nullable=False, index=True
     )
 
-    def to_dict(self,except_attrs:Optional[Sequence[str]]=("is_active",)):
+    def to_dict(self, except_attrs: Optional[Sequence[str]] = ("is_active",)):
         return super().to_dict(except_attrs)
 
+
 class NoteMixin(HasEngineProtocol):
-    def get_all_notes(self,user_id:str) -> List[Note]:
-        query = select(Note).where(Note.user_id == user_id,Note.is_active==True)
+    def get_all_notes(self, user_id: str) -> List[Note]:
+        query = select(Note).where(
+            Note.user_id == user_id, Note.is_active == True
+        )
         with Session(self.engine, expire_on_commit=False) as session:
             return session.scalars(query).all()
-    
-    def get_note(self, id: int,user_id:str) -> Optional[Note]:
-        query = select(Note).where(Note.id == id, Note.user_id == user_id,Note.is_active==True)
+
+    def get_note(self, id: int, user_id: str) -> Optional[Note]:
+        query = select(Note).where(
+            Note.id == id, Note.user_id == user_id, Note.is_active == True
+        )
         with Session(self.engine, expire_on_commit=False) as session:
-            note = session.scalars(query).first()            
+            note = session.scalars(query).first()
         return note
 
-    def create_note(self, text: str,user_id:str) -> Note:
+    def create_note(self, text: str, user_id: str) -> Note:
         dt_now = datetime.now(tz=timezone.utc)
         note = Note(
             user_id=user_id,
@@ -75,42 +81,52 @@ class NoteMixin(HasEngineProtocol):
             session.commit()
         return note
 
-    def edit_note(self, id: int, user_id:str, update_dict:Dict) -> Optional[Note]:
-        editable_columns = ["text","tags","extracted_date"]
-        update_dict = {k:v for k,v in update_dict.items() if k in editable_columns}
+    def edit_note(
+        self, id: int, user_id: str, update_dict: Dict
+    ) -> Optional[Note]:
+        editable_columns = ["text", "tags", "extracted_date"]
+        update_dict = {
+            k: v for k, v in update_dict.items() if k in editable_columns
+        }
         if not update_dict:
             return None
-        
-        query = select(Note).where(Note.id == id, Note.user_id == user_id,Note.is_active==True)
+
+        query = select(Note).where(
+            Note.id == id, Note.user_id == user_id, Note.is_active == True
+        )
         dt_now = datetime.now(tz=timezone.utc)
         note = None
         with Session(self.engine, expire_on_commit=False) as session:
-            note = session.scalars(query).first() 
+            note = session.scalars(query).first()
             if note is not None:
-                for k,v in update_dict.items():                    
-                    note.__setattr__(k,v)            
+                for k, v in update_dict.items():
+                    note.__setattr__(k, v)
                 note.updated_at = dt_now
                 session.commit()
         return note
 
-    def delete_note(self, id: int, user_id:str) -> Optional[Note]:        
-        query = select(Note).where(Note.id == id, Note.user_id == user_id,Note.is_active==True)
+    def delete_note(self, id: int, user_id: str) -> Optional[Note]:
+        query = select(Note).where(
+            Note.id == id, Note.user_id == user_id, Note.is_active == True
+        )
         dt_now = datetime.now(tz=timezone.utc)
         note = None
         with Session(self.engine, expire_on_commit=False) as session:
-            note = session.scalars(query).first() 
+            note = session.scalars(query).first()
             if note is not None:
                 note.is_active = False
                 note.updated_at = dt_now
                 session.commit()
         return note
-    
-    def start_note_tagging(self, id: int,user_id:str) -> Optional[Note]:
-        query = select(Note).where(Note.id == id, Note.user_id == user_id,Note.is_active==True)
+
+    def start_note_tagging(self, id: int, user_id: str) -> Optional[Note]:
+        query = select(Note).where(
+            Note.id == id, Note.user_id == user_id, Note.is_active == True
+        )
         dt_now = datetime.now(tz=timezone.utc)
         note = None
         with Session(self.engine, expire_on_commit=False) as session:
-            note = session.scalars(query).first() 
+            note = session.scalars(query).first()
             if note is not None:
                 note.status = ProcessStatus.IN_PROGRESS
                 note.updated_at = dt_now
@@ -118,16 +134,22 @@ class NoteMixin(HasEngineProtocol):
         return note
 
     def complete_note_tagging(
-        self, id: int,user_id:str,tags: str, extracted_date: Optional[datetime] = None
+        self,
+        id: int,
+        user_id: str,
+        tags: str,
+        extracted_date: Optional[datetime] = None,
     ) -> Optional[Note]:
-        query = select(Note).where(Note.id == id, Note.user_id == user_id,Note.is_active==True)
-        dt_now = datetime.now(tz=timezone.utc)        
+        query = select(Note).where(
+            Note.id == id, Note.user_id == user_id, Note.is_active == True
+        )
+        dt_now = datetime.now(tz=timezone.utc)
         with Session(self.engine, expire_on_commit=False) as session:
-            note = session.scalars(query).first() 
+            note = session.scalars(query).first()
             if note is not None:
                 note.status = ProcessStatus.COMPLETED
                 note.updated_at = dt_now
                 note.tags = tags
                 note.extracted_date = extracted_date
-                session.commit()                
+                session.commit()
         return note
