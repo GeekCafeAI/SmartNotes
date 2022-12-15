@@ -1,7 +1,8 @@
 from datetime import datetime
 import openai
 from dateparser.search import search_dates
-from typing import List, Tuple, TypedDict, Optional
+from dateparser.date import DateDataParser, DateData
+from typing import List, Tuple, TypedDict, Optional, Literal
 from pathlib import Path
 
 
@@ -15,8 +16,15 @@ INITIAL_PROMPT_PLACEHOLDER = ("Generate up to 3 categories from a given text. Ca
 PROCESSING_TAGS_PLACEHOLDERS = []
 PROCESSING_MODELS = []
 
+DATEPARSER_SETTINGS = {
+    'PREFER_DATES_FROM': 'future',
+    'PARSERS': ['relative-time', 'absolute-time'],
+    'RETURN_TIME_AS_PERIOD': True
+}
+
 Response = str
 Tags = list[str]
+Period = Literal["time", "day", "week", "month", "year"]
 
 
 class Record(TypedDict):
@@ -38,8 +46,14 @@ def get_response(prompt: str, model: str, temperature: float = 0.0, frequency_pe
         logprobs=logprobs,
         stop='###'
     )
-    responses = [request['choices'][i]['text'].split('\n\n')[1].strip() for i in range(logprobs)]
-    return responses[0]  # TODO: filter responses instead of choosing the first one
+    responses = [request['choices'][i]['text'].strip() for i in range(logprobs)]
+    best_response = filter_responses(responses)
+    return best_response
+
+
+def filter_responses(responses: List[Response]) -> Response:
+    # TODO: filter responses instead of choosing the first one
+    return responses[0]
 
 
 def get_initial_response(sentence: str, prompt_placeholder: str, model: str) -> Response:
@@ -57,15 +71,30 @@ def tags2input(tags: Tags) -> str:
     return ', '.join(tags)
 
 
-def split_tags_from_date(raw_tags: Tags) -> Tuple[Tags, List[datetime]]:
-    dates = [search_dates(tag, languages=['en']) for tag in raw_tags]  # TODO: change language by user's preference
+def select_best_date(dates: List[DateData]) -> datetime:
+    priority_list: List[Period] = ['time', 'day', 'week', 'month']
+    periods = [date.period for date in dates]
+    for priority in priority_list:
+        if priority in periods:
+            return dates[periods.index(priority)].date_obj
+    return dates[0].date_obj  # return first date if filtering did not help
+
+
+def split_tags_from_date(raw_tags: Tags, language: str) -> Tuple[Tags, Optional[datetime]]:
+    ddp = DateDataParser(settings=DATEPARSER_SETTINGS)
+    dates = [search_dates(tag, languages=[language], settings=DATEPARSER_SETTINGS) for tag in raw_tags]
     date_tag_ix, parsed_dates = [], []
     for date_i, date in enumerate(dates):
         if date is not None:
             date_tag_ix.append(date_i)
-            parsed_dates.append(date[0][1])  # TODO: currently getting 1st date only - get all and try to join them
+            parsed_date = ddp.get_date_data(date[0][0])  # always get first date from tag
+            parsed_dates.append(parsed_date)
+    if parsed_dates:
+        best_date = select_best_date(parsed_dates) if len(parsed_dates) > 1 else parsed_dates[0].date_obj
+    else:
+        best_date = None
     tags_wo_dates = [tag for tag_i, tag in enumerate(raw_tags) if tag_i not in date_tag_ix]
-    return tags_wo_dates, parsed_dates
+    return tags_wo_dates, best_date
 
 
 def finalize_tags_with_gpt3(raw_tags: Tags, prompt_placeholders: List[str], models: List[str]) -> Tags:
@@ -76,19 +105,41 @@ def finalize_tags_with_gpt3(raw_tags: Tags, prompt_placeholders: List[str], mode
     return [x.lower() for x in tags]
 
 
-def get_tags_and_date(sentence: str, model: str = 'text-davinci-003') -> Record:
+def get_tags_and_date(sentence: str, language: str = 'en', prompt_placeholder: str = INITIAL_PROMPT_PLACEHOLDER,
+                      model: str = 'text-davinci-003') -> Record:
+    if not sentence:
+        return {'date': None, 'tags': []}
     with open(PATH_TO_KEY_FILE, 'r') as f:
         openai.api_key = f.read()
-    response = get_initial_response(sentence, INITIAL_PROMPT_PLACEHOLDER, model=model)
+    response = get_initial_response(sentence, prompt_placeholder=prompt_placeholder, model=model)
     raw_tags = response2tags(response)
-    tags, dates = split_tags_from_date(raw_tags)
-    date = dates[0] if dates else None  # TODO: remove hardcoded 1st date selection
+    tags, date = split_tags_from_date(raw_tags, language=language)
     tags = finalize_tags_with_gpt3(raw_tags, PROCESSING_TAGS_PLACEHOLDERS, PROCESSING_MODELS)
     record: Record = {'date': date, 'tags': tags}
     return record
 
 
 if __name__ == "__main__":
-    question = input('Enter your text: ')
-    answer = get_tags_and_date(question)
-    print(answer)
+
+    test_questions = [
+        'buy sour cream until monday',
+        '1on1 meeting with the boss friday next week',
+        'I want to get fit by the end of year',
+        'BananaShop project deadline is 12th October',
+        'Sasha birthday Nov 20',
+        'idea for a new character for my book: guy who never sleeps',
+        'Take pills 3 times a day',
+        'I felt derealisation just now'
+    ]
+    prompt = input('Enter prompt with {sentence}: ')
+    for question in test_questions:
+        print(get_tags_and_date(question, prompt_placeholder=prompt))
+
+    while True:
+        question = input('Enter your sentence: ')
+        if question == 'stop':
+            print('Stopped testing.')
+            break
+        if question:
+            answer = get_tags_and_date(question, prompt_placeholder=prompt)
+            print(answer)
