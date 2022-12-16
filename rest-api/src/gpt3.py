@@ -1,20 +1,48 @@
 from datetime import datetime
 import openai
 from dateparser.search import search_dates
-from dateparser.date import DateDataParser, DateData
-from typing import List, Tuple, TypedDict, Optional, Literal
+from typing import List, TypedDict, Optional, Tuple
 from pathlib import Path
 
 
 PATH_TO_KEY_FILE = Path().resolve() / Path("rest-api", "src", "key.key")
 
-INITIAL_PROMPT_PLACEHOLDER = ("Generate up to 3 categories from a given text. Categories should be comma-separated."
-                              "Text that reminds of any event should get 'reminder' category. "
-                              "Add a separate category for date there is any mention of it. "
-                              "End categories with '###'. Text: {sentence}")
+INITIAL_TAG_PROMPT_PLACEHOLDER = (
+    "Generate up to 4 categories from the given text. The categories should be comma-separated and end with '###'. "
+    "Add the 'reminder' category for the text that mentions any event in the future. Add the 'idea' category for the "
+    "text that describes an idea. Add the 'goal' category for the text that describes a wish or personal goal. For the "
+    "text that includes proper nouns, add them as categories, but do not add human names. Do not continue the text or "
+    "write duplicated categories, and ignore dates."
+    "\nText: I have a meeting with John on January 2nd, 2022.###"
+    "\nCategories: reminder, meeting###"
+    "\nText: I need to buy tomatoes until Monday.###"
+    "\nCategories: groceries, shopping, reminder###"
+    "\nText: Learn how to write mobile apps with Flutter and Python###"
+    "\nCategories: goal, learning, programming###"
+    "\nText: Lila's birthday: December 20.###"
+    "\nCategories: birthday###"
+    "\nText: {sentence}###\nCategories:)"
+)
+
+INITIAL_DATE_PROMPT_PLACEHOLDER = (
+    "Find a date in the provided text and output it in year-month-day format. Add the 'recurrent' word after a comma "
+    "for the text that includes a recurrent event."
+    "\nText: I have a meeting with John on January 2nd, 2022.###"
+    "\nCategories: 2022-01-02###"
+    "\nText: I need to buy tomatoes until Monday.###"
+    "\nCategories: Monday###"
+    "\nText: Learn how to write mobile apps with Flutter and Python###"
+    "\nCategories:###"
+    "\nText: Lila's birthday: December 20.###"
+    "\nCategories: recurrent, december 20###"
+    "\nText: {sentence}###\nCategories:"
+)
+
 
 PROCESSING_TAGS_PLACEHOLDERS = []
 PROCESSING_MODELS = []
+DATE_TAGS = ('recurrent',)
+
 
 DATEPARSER_SETTINGS = {
     'PREFER_DATES_FROM': 'future',
@@ -24,7 +52,6 @@ DATEPARSER_SETTINGS = {
 
 Response = str
 Tags = list[str]
-Period = Literal["time", "day", "week", "month", "year"]
 
 
 class Record(TypedDict):
@@ -67,34 +94,22 @@ def response2tags(response: Response) -> Tags:
     return [x for x in tags if x]
 
 
+def response2date(response: Response, language: str) -> Optional[datetime]:
+    parsed_date = search_dates(response, languages=[language])
+    if parsed_date is not None:
+        return parsed_date[0][1]
+
+
+def response2date_tags(response: Response, date_tags: Tuple[str] = DATE_TAGS) -> Tags:
+    found_date_tags = []
+    for tag in date_tags:
+        if tag in response:
+            found_date_tags.append(tag)
+    return found_date_tags
+
+
 def tags2input(tags: Tags) -> str:
     return ', '.join(tags)
-
-
-def select_best_date(dates: List[DateData]) -> datetime:
-    priority_list: List[Period] = ['time', 'day', 'week', 'month']
-    periods = [date.period for date in dates]
-    for priority in priority_list:
-        if priority in periods:
-            return dates[periods.index(priority)].date_obj
-    return dates[0].date_obj  # return first date if filtering did not help
-
-
-def split_tags_from_date(raw_tags: Tags, language: str) -> Tuple[Tags, Optional[datetime]]:
-    ddp = DateDataParser(settings=DATEPARSER_SETTINGS)
-    dates = [search_dates(tag, languages=[language], settings=DATEPARSER_SETTINGS) for tag in raw_tags]
-    date_tag_ix, parsed_dates = [], []
-    for date_i, date in enumerate(dates):
-        if date is not None:
-            date_tag_ix.append(date_i)
-            parsed_date = ddp.get_date_data(date[0][0])  # always get first date from tag
-            parsed_dates.append(parsed_date)
-    if parsed_dates:
-        best_date = select_best_date(parsed_dates) if len(parsed_dates) > 1 else parsed_dates[0].date_obj
-    else:
-        best_date = None
-    tags_wo_dates = [tag for tag_i, tag in enumerate(raw_tags) if tag_i not in date_tag_ix]
-    return tags_wo_dates, best_date
 
 
 def finalize_tags_with_gpt3(raw_tags: Tags, prompt_placeholders: List[str], models: List[str]) -> Tags:
@@ -105,16 +120,22 @@ def finalize_tags_with_gpt3(raw_tags: Tags, prompt_placeholders: List[str], mode
     return [x.lower() for x in tags]
 
 
-def get_tags_and_date(sentence: str, language: str = 'en', prompt_placeholder: str = INITIAL_PROMPT_PLACEHOLDER,
-                      model: str = 'text-davinci-003') -> Record:
+def get_tags_and_date(sentence: str, language: str = 'en', model: str = 'text-davinci-003',
+                      tag_prompt_placeholder: str = INITIAL_TAG_PROMPT_PLACEHOLDER,
+                      date_prompt_placeholder: str = INITIAL_DATE_PROMPT_PLACEHOLDER, verbose: bool = False) -> Record:
     if not sentence:
         return {'date': None, 'tags': []}
     with open(PATH_TO_KEY_FILE, 'r') as f:
         openai.api_key = f.read()
-    response = get_initial_response(sentence, prompt_placeholder=prompt_placeholder, model=model)
-    raw_tags = response2tags(response)
-    tags, date = split_tags_from_date(raw_tags, language=language)
-    tags = finalize_tags_with_gpt3(raw_tags, PROCESSING_TAGS_PLACEHOLDERS, PROCESSING_MODELS)
+    tag_response = get_initial_response(sentence, prompt_placeholder=tag_prompt_placeholder, model=model)
+    date_response = get_initial_response(sentence, prompt_placeholder=date_prompt_placeholder, model=model)
+    if verbose:
+        print('Tags:', tag_response)
+        print('Date:', date_response)
+    raw_tags = response2tags(tag_response)
+    date = response2date(date_response, language=language)
+    date_tags = response2date_tags(date_response)
+    tags = finalize_tags_with_gpt3(raw_tags + date_tags, PROCESSING_TAGS_PLACEHOLDERS, PROCESSING_MODELS)
     record: Record = {'date': date, 'tags': tags}
     return record
 
@@ -131,9 +152,9 @@ if __name__ == "__main__":
         'Take pills 3 times a day',
         'I felt derealisation just now'
     ]
-    prompt = input('Enter prompt with {sentence}: ')
     for question in test_questions:
-        print(get_tags_and_date(question, prompt_placeholder=prompt))
+        print(question)
+        print(get_tags_and_date(question, verbose=True), '\n')
 
     while True:
         question = input('Enter your sentence: ')
@@ -141,5 +162,5 @@ if __name__ == "__main__":
             print('Stopped testing.')
             break
         if question:
-            answer = get_tags_and_date(question, prompt_placeholder=prompt)
+            answer = get_tags_and_date(question, verbose=True)
             print(answer)
