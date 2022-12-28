@@ -1,4 +1,7 @@
 from datetime import datetime
+from pathlib import Path
+from typing import List, Optional, Tuple, TypedDict
+
 import openai
 from dateparser.search import search_dates
 from typing import List, TypedDict, Optional, Tuple
@@ -51,7 +54,7 @@ DATEPARSER_SETTINGS = {
 }
 
 Response = str
-Tags = list[str]
+Tags = List[str]
 
 
 class Record(TypedDict):
@@ -59,9 +62,16 @@ class Record(TypedDict):
     tags: List[str]
 
 
-def get_response(prompt: str, model: str, temperature: float = 0.0, frequency_penalty: float = 0.0,
-                 presence_penalty: float = 0.0, top_p: float = 0.0, logprobs: int = 1,
-                 max_tokens: int = 64) -> Response:
+def get_response(
+    prompt: str,
+    model: str,
+    temperature: float = 0.0,
+    frequency_penalty: float = 0.0,
+    presence_penalty: float = 0.0,
+    top_p: float = 0.0,
+    logprobs: int = 1,
+    max_tokens: int = 64,
+) -> Response:
     request = openai.Completion.create(
         model=model,
         prompt=prompt,
@@ -71,7 +81,7 @@ def get_response(prompt: str, model: str, temperature: float = 0.0, frequency_pe
         frequency_penalty=frequency_penalty,
         presence_penalty=presence_penalty,
         logprobs=logprobs,
-        stop='###'
+        stop="###",
     )
     responses = [request['choices'][i]['text'].strip() for i in range(logprobs)]
     best_response = filter_responses(responses)
@@ -83,14 +93,16 @@ def filter_responses(responses: List[Response]) -> Response:
     return responses[0]
 
 
-def get_initial_response(sentence: str, prompt_placeholder: str, model: str) -> Response:
+def get_initial_response(
+    sentence: str, prompt_placeholder: str, model: str
+) -> Response:
     prompt = prompt_placeholder.format(sentence=sentence)
     response = get_response(prompt, model=model)
     return response
 
 
 def response2tags(response: Response) -> Tags:
-    tags = [x.strip() for x in response.split(',')]
+    tags = [x.strip() for x in response.split(",")]
     return [x for x in tags if x]
 
 
@@ -109,13 +121,15 @@ def response2date_tags(response: Response, date_tags: Tuple[str] = DATE_TAGS) ->
 
 
 def tags2input(tags: Tags) -> str:
-    return ', '.join(tags)
+    return ", ".join(tags)
 
 
 def finalize_tags_with_gpt3(raw_tags: Tags, prompt_placeholders: List[str], models: List[str]) -> Tags:
     tags = raw_tags
     for placeholder, model in zip(prompt_placeholders, models):
-        response = get_response(placeholder.format(tags=tags2input(tags)), model=model)
+        response = get_response(
+            placeholder.format(tags=tags2input(tags)), model=model
+        )
         tags = response2tags(response)
     return [x.lower() for x in tags]
 

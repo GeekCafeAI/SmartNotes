@@ -6,18 +6,18 @@ from urllib.parse import urlparse
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from src.datastore.base_model import BaseTable
-from src.datastore.tagged_text import TaggedTextMixin
+from src.datastore.note import NoteMixin
 
 logger = logging.getLogger(__name__)
 
 
 class HasEngineProtocol(Protocol):
     @property
-    def engine(self) -> Tuple[Engine]:
+    def engine(self) -> Engine:
         ...
 
 
-class Datastore(TaggedTextMixin):
+class Datastore(NoteMixin):
     """
     Datastore that requires a database URL.
     """
@@ -48,7 +48,7 @@ class Datastore(TaggedTextMixin):
         self._engine: Optional[Engine] = None
 
     @property
-    def engine(self) -> Tuple[Engine]:
+    def engine(self) -> Engine:
         if self._engine is None:
 
             db_url_parts = urlparse(self.database_url)
