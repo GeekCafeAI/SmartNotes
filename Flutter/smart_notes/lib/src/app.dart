@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:smart_notes/src/screens/menu_screen.dart';
 import 'package:smart_notes/src/screens/tasks_screen.dart';
 import 'package:smart_notes/src/settings/theme.dart';
 
@@ -75,12 +74,8 @@ class MyApp extends StatelessWidget {
                     case SettingsView.routeName:
                       return SettingsView(controller: settingsController);
                     case TasksScreen.routeName:
-                      return TasksScreen(
-                        settingsController: settingsController,
-                      );
-                    case MenuScreen.routeName:
                     default:
-                      return MenuScreen(settingsController: settingsController);
+                      return TasksScreen();
                   }
                 },
               );
