@@ -6,18 +6,15 @@ import 'package:smart_notes/src/models/task_model.dart';
 import 'package:smart_notes/src/providers/tasks.dart';
 import 'package:smart_notes/src/repositories/task_service.dart';
 
-import '../settings/settings_controller.dart';
 import '../settings/settings_view.dart';
 
 /// Displays a list of SampleItems.
 class MenuScreen extends StatefulWidget {
   const MenuScreen({
     super.key,
-    required this.settingsController,
   });
 
   static const routeName = '/';
-  final SettingsController settingsController;
 
   @override
   State<MenuScreen> createState() => _MenuScreenState();

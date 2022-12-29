@@ -1,6 +1,17 @@
 # smart_notes
 
-A new Flutter project.
+SmartNotes Flutter UI.
+
+# Internal setup
+
+1. Install Flutter SDK
+2. Install Dart SDK
+3. Install Android Studio
+4. In Android Studio, install Android SDK
+5. In Android Studio, set Dart SDK path
+6. In Android Studio, install Flutter plugin
+7. Open SmartNotes/Flutter/smart_notes in Android Studio
+8. You should see main.dart with Flutter icon on right top side, click ▶ to run
 
 ## Getting Started
 
