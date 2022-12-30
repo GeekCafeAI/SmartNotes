@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_notes/src/data/tasks_list.dart';
 
 import '../models/task_model.dart';
-import '../settings/settings_controller.dart';
+import '../providers/settings/settings_controller.dart';
 
 /// Displays detailed information about a SampleItem.
 

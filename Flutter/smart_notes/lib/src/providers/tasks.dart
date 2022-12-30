@@ -3,8 +3,13 @@ import 'package:flutter/foundation.dart';
 import '../models/task_model.dart';
 
 class Tasks with ChangeNotifier {
-  final List<Task> _items = [];
-  final List<String> _tags = [];
+  final List<Task> _items = [
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+  ];
+  final List<String> _tags = ["Gym", "Work", "Reminder", "Meditate"];
 
   List<Task> get items {
     return [..._items];

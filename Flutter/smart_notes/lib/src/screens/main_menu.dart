@@ -1,10 +1,9 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_notes/src/data/tasks_list.dart';
 import 'package:smart_notes/src/repositories/task_service.dart';
 
-import '../settings/settings_controller.dart';
-import '../settings/settings_view.dart';
+import '../providers/settings/settings_controller.dart';
+import 'settings_view.dart';
 
 /// Displays a list of SampleItems.
 class MainMenu extends StatefulWidget {
@@ -60,13 +59,6 @@ class _MainMenuState extends State<MainMenu> {
   var _addedTags;
   final _deviceData = <String?>{};
   final menuBackground = const NetworkImage("https://picsum.photos/412/892/");
-
-  void splitTags(String tags) {
-    final splitTags = tags.split(",");
-    for (int i = 0; i < splitTags.length; i++) {
-      tagsList.add(splitTags[i]);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

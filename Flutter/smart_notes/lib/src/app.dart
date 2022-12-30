@@ -2,21 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_notes/src/providers/settings/settings_controller.dart';
+import 'package:smart_notes/src/screens/menu_screen.dart';
 import 'package:smart_notes/src/screens/tasks_screen.dart';
-import 'package:smart_notes/src/settings/theme.dart';
+import 'package:smart_notes/src/theme.dart';
 
 import './providers/tasks.dart';
-import 'settings/settings_controller.dart';
-import 'settings/settings_view.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
-  const MyApp({
+  MyApp({
     super.key,
     required this.settingsController,
   });
 
   final SettingsController settingsController;
+
+  final PageController _controller = PageController(
+    initialPage: 0,
+  );
+
+  // @override
+  // void dispose() {
+  //   _controller.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -64,22 +74,10 @@ class MyApp extends StatelessWidget {
             darkTheme: myThemeDark,
             themeMode: settingsController.themeMode,
 
-            // Define a function to handle named routes in order to support
-            // Flutter web url navigation and deep linking.
-            onGenerateRoute: (RouteSettings routeSettings) {
-              return MaterialPageRoute<void>(
-                settings: routeSettings,
-                builder: (BuildContext context) {
-                  switch (routeSettings.name) {
-                    case SettingsView.routeName:
-                      return SettingsView(controller: settingsController);
-                    case TasksScreen.routeName:
-                    default:
-                      return TasksScreen();
-                  }
-                },
-              );
-            },
+            home: PageView(
+              controller: _controller,
+              children: [const MenuScreen(), TasksScreen()],
+            ),
           ),
         );
       },
