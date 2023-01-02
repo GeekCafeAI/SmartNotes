@@ -1,7 +1,6 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:smart_notes/src/data/tasks_list.dart';
 import 'package:smart_notes/src/models/task_model.dart';
 import 'package:smart_notes/src/providers/tasks.dart';
 import 'package:smart_notes/src/repositories/task_service.dart';
@@ -60,13 +59,6 @@ class _MenuScreenState extends State<MenuScreen> {
   var _addedTags;
   final _deviceData = <String?>{};
   final menuBackground = const NetworkImage("https://picsum.photos/412/892/");
-
-  void splitTags(String tags) {
-    final splitTags = tags.split(",");
-    for (int i = 0; i < splitTags.length; i++) {
-      tagsList.add(splitTags[i]);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

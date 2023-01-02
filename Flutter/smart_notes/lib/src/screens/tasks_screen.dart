@@ -2,43 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_notes/src/providers/tasks.dart';
 
-import '../models/task_model.dart';
-
-// class TasksScreen extends StatefulWidget {
-//   static const routeName = '/tasks';
-//
-//   const TasksScreen({
-//     Key? key,
-//   }) : super(key: key);
-//
-//   @override
-//   _TasksScreenState createState() => _TasksScreenState();
-// }
-//
-// class _TasksScreenState extends State<TasksScreen> {
-//   final PageController _controller = PageController(
-//     initialPage: 0,
-//   );
-//
-//   @override
-//   void dispose() {
-//     _controller.dispose();
-//     super.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return PageView(
-//       controller: _controller,
-//       children: const [MenuScreen(), TasksPage()],
-//     );
-//   }
-//
-//   final _filters = [];
-// }
-
 class TasksScreen extends StatefulWidget {
-  TasksScreen({
+  const TasksScreen({
     Key? key,
   }) : super(key: key);
 
@@ -46,16 +11,11 @@ class TasksScreen extends StatefulWidget {
   State<TasksScreen> createState() => _TasksScreenState();
 
   static const routeName = '/tasks';
-  final _filters = [];
 }
 
 class _TasksScreenState extends State<TasksScreen> {
   @override
   Widget build(BuildContext context) {
-    final tasksData = Provider.of<Tasks>(context, listen: true);
-    final tasks = tasksData.items;
-    final tags = tasksData.tags;
-
     return Scaffold(
       appBar: AppBar(
         excludeHeaderSemantics: false,
@@ -66,9 +26,10 @@ class _TasksScreenState extends State<TasksScreen> {
       body: Builder(
         builder: (context) {
           return Column(
-            children: [
-              Flexible(child: FiltersWrap(tags: tags)),
-              Flexible(child: TasksList(tasks: tasks)),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Flexible(child: FiltersWrap()),
+              Flexible(child: TasksList()),
             ],
           );
         },
@@ -80,39 +41,37 @@ class _TasksScreenState extends State<TasksScreen> {
 class FiltersWrap extends StatefulWidget {
   const FiltersWrap({
     Key? key,
-    required this.tags,
   }) : super(key: key);
-
-  final List<String> tags;
 
   @override
   State<FiltersWrap> createState() => _FiltersWrapState();
 }
 
 class _FiltersWrapState extends State<FiltersWrap> {
-  final List<String> _filters = [];
-
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 2,
-      runSpacing: -10,
-      children: List.generate(
-          widget.tags.length,
-          (index) => FilterChip(
-              label: Text(widget.tags[index]),
-              selected: _filters.contains(widget.tags[index]),
-              onSelected: (val) {
-                setState(() {
+    final tasksData = Provider.of<Tasks>(context, listen: true);
+    final tags = tasksData.tags;
+    final enabledTags = tasksData.enabledTags;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
+      child: Wrap(
+        spacing: 2,
+        runSpacing: -10,
+        children: List.generate(
+            tags.length,
+            (index) => FilterChip(
+                label: Text(tags[index]),
+                selected: enabledTags.contains(tags[index]),
+                onSelected: (val) {
                   if (val) {
-                    _filters.add(widget.tags[index]);
+                    tasksData.enableTag(tags[index]);
                   } else {
-                    _filters.removeWhere((title) {
-                      return title == widget.tags[index];
-                    });
+                    tasksData.disableTag(index);
                   }
-                });
-              })),
+                })),
+      ),
     );
   }
 }
@@ -120,13 +79,13 @@ class _FiltersWrapState extends State<FiltersWrap> {
 class TasksList extends StatelessWidget {
   const TasksList({
     Key? key,
-    required this.tasks,
   }) : super(key: key);
-
-  final List<Task> tasks;
 
   @override
   Widget build(BuildContext context) {
+    final taskData = Provider.of<Tasks>(context);
+    final tasks = taskData.tasks;
+
     return ListView.builder(
       shrinkWrap: true,
       padding: EdgeInsets.zero,
