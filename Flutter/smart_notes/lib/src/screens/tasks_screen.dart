@@ -17,18 +17,17 @@ class _TasksScreenState extends State<TasksScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        excludeHeaderSemantics: false,
-        backgroundColor: Colors.black.withOpacity(0.5),
-        title: const Text('List of your tasks'),
-      ),
       extendBody: true,
       body: Builder(
         builder: (context) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Flexible(child: FiltersWrap()),
+          return const CustomScrollView(
+            slivers: [
+              Flexible(
+                  child: SliverAppBar(
+                bottom: PreferredSize(
+                    preferredSize: Size(double.infinity, 150),
+                    child: FiltersWrap()),
+              )),
               Flexible(child: TasksList()),
             ],
           );
@@ -77,33 +76,28 @@ class _FiltersWrapState extends State<FiltersWrap> {
 }
 
 class TasksList extends StatelessWidget {
-  const TasksList({
-    Key? key,
-  }) : super(key: key);
+  const TasksList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final taskData = Provider.of<Tasks>(context);
     final tasks = taskData.tasks;
 
-    return ListView.builder(
-      shrinkWrap: true,
-      padding: EdgeInsets.zero,
-      scrollDirection: Axis.vertical,
-      itemCount: tasks.length,
-      itemBuilder: (context, itemListIndex) {
-        return Card(
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        childCount: tasks.length,
+        (context, index) => Card(
           child: ListTile(
             textColor: Colors.black,
-            title: Text(tasks[itemListIndex].text),
+            title: Text(tasks[index].text),
             subtitle: Text(
-              tasks[itemListIndex].tags,
+              tasks[index].tags,
               style: const TextStyle(color: Colors.grey),
             ),
             trailing: const Icon(Icons.more_vert),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

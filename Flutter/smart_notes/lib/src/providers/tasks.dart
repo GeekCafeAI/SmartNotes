@@ -8,6 +8,18 @@ class Tasks with ChangeNotifier {
     Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
     Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
     Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
+    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
   ];
   final List<String> _tags = [
     "Gym",
