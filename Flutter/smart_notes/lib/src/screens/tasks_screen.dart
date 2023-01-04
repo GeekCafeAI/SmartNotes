@@ -22,17 +22,89 @@ class _TasksScreenState extends State<TasksScreen> {
         builder: (context) {
           return const CustomScrollView(
             slivers: [
-              Flexible(
-                  child: SliverAppBar(
-                bottom: PreferredSize(
-                    preferredSize: Size(double.infinity, 150),
-                    child: FiltersWrap()),
-              )),
-              Flexible(child: TasksList()),
+              TitlePanel(),
+              FilterSearchPanel(),
+              TasksList(),
             ],
           );
         },
       ),
+    );
+  }
+}
+
+class FilterSearchPanel extends StatelessWidget {
+  const FilterSearchPanel({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 4, left: 4, right: 4),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.deepPurple.shade300,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 4, left: 4, right: 4),
+                child: TextField(
+                    decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Theme.of(context).primaryColor.withOpacity(0.7),
+                )),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: const FiltersWrap(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class TitlePanel extends StatefulWidget {
+  const TitlePanel({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<TitlePanel> createState() => _TitlePanelState();
+}
+
+class _TitlePanelState extends State<TitlePanel> {
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      shape: const ContinuousRectangleBorder(
+          borderRadius: BorderRadius.only(
+        bottomLeft: Radius.circular(30),
+        bottomRight: Radius.circular(30),
+      )),
+      floating: true,
+      title: const Text(
+        "Your Tasks",
+        textScaleFactor: 1.5,
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 50),
+          child: Container(
+            height: 50,
+            width: 50,
+            decoration: const BoxDecoration(
+                color: Colors.deepPurple, shape: BoxShape.circle),
+            child: const Icon(
+              Icons.search,
+            ),
+          ),
+        )
+      ],
     );
   }
 }
@@ -54,14 +126,16 @@ class _FiltersWrapState extends State<FiltersWrap> {
     final enabledTags = tasksData.enabledTags;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
+      padding: const EdgeInsets.only(bottom: 4),
       child: Wrap(
         spacing: 2,
         runSpacing: -10,
         children: List.generate(
             tags.length,
             (index) => FilterChip(
+                backgroundColor: Colors.black.withOpacity(0.7),
                 label: Text(tags[index]),
+                checkmarkColor: Colors.white,
                 selected: enabledTags.contains(tags[index]),
                 onSelected: (val) {
                   if (val) {

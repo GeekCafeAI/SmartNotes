@@ -4,8 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:smart_notes/src/models/task_model.dart';
 import 'package:smart_notes/src/providers/tasks.dart';
 import 'package:smart_notes/src/repositories/task_service.dart';
-
-import 'settings_view.dart';
+import 'package:smart_notes/src/screens/settings_view.dart';
 
 /// Displays a list of SampleItems.
 class MenuScreen extends StatefulWidget {
@@ -79,10 +78,7 @@ class _MenuScreenState extends State<MenuScreen> {
             IconButton(
               icon: const Icon(Icons.settings),
               onPressed: () {
-                // Navigate to the settings page. If the user leaves and returns
-                // to the app after it has been killed while running in the
-                // background, the navigation stack is restored.
-                Navigator.restorablePushNamed(context, SettingsView.routeName);
+                Navigator.pushNamed(context, SettingsView.routeName);
               },
             ),
           ],
