@@ -3,8 +3,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_notes/src/providers/settings/settings_controller.dart';
+import 'package:smart_notes/src/providers/widget_visibility.dart';
 import 'package:smart_notes/src/screens/menu_screen.dart';
 import 'package:smart_notes/src/screens/tasks_screen.dart';
+import 'package:smart_notes/src/screens/testing_screen.dart';
 import 'package:smart_notes/src/theme.dart';
 
 import './providers/tasks.dart';
@@ -37,8 +39,12 @@ class MyApp extends StatelessWidget {
     return AnimatedBuilder(
       animation: settingsController,
       builder: (BuildContext context, Widget? child) {
-        return ChangeNotifierProvider(
-          create: (context) => Tasks(),
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider<WidgetVisibility>(
+                create: (_) => WidgetVisibility()),
+            ChangeNotifierProvider<Tasks>(create: (_) => Tasks()),
+          ],
           child: MaterialApp(
             // Providing a restorationScopeId allows the Navigator built by the
             // MaterialApp to restore the navigation stack when a user leaves and
@@ -75,8 +81,9 @@ class MyApp extends StatelessWidget {
             themeMode: settingsController.themeMode,
 
             home: PageView(
+              pageSnapping: true,
               controller: _controller,
-              children: [const MenuScreen(), TasksScreen()],
+              children: const [TestingScreen(), MenuScreen(), TasksScreen()],
             ),
           ),
         );

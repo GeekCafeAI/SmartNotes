@@ -5,7 +5,7 @@ final ThemeData myThemeLight = ThemeData(
   primaryColor: const Color(0xffffffff),
   primaryColorLight: const Color(0xffe6e6e6),
   primaryColorDark: const Color(0xff9fa4a1),
-  canvasColor: const Color(0xff607d8b),
+  canvasColor: Colors.transparent,
   scaffoldBackgroundColor: const Color(0xfffafafa),
   bottomAppBarColor: const Color(0xffffffff),
   cardColor: const Color(0xffffffff),
@@ -236,33 +236,6 @@ final ThemeData myThemeLight = ThemeData(
     labelColor: Color(0xdd000000),
     unselectedLabelColor: Color(0xb2000000),
   ),
-  chipTheme: const ChipThemeData(
-    backgroundColor: Color(0xff607d8b),
-    brightness: Brightness.light,
-    deleteIconColor: Color(0xde000000),
-    disabledColor: Color(0x0c000000),
-    labelPadding: EdgeInsets.only(top: 0, bottom: 0, left: 8, right: 8),
-    labelStyle: TextStyle(
-      color: Color(0xffbacbcf),
-      fontSize: null,
-      fontWeight: FontWeight.w700,
-      fontStyle: FontStyle.normal,
-    ),
-    padding: EdgeInsets.only(top: 4, bottom: 4, left: 4, right: 4),
-    secondaryLabelStyle: TextStyle(
-      color: Color(0x3d000000),
-      fontSize: null,
-      fontWeight: FontWeight.w700,
-      fontStyle: FontStyle.normal,
-    ),
-    secondarySelectedColor: Color(0x3dffffff),
-    selectedColor: Color(0x3d000000),
-    shape: StadiumBorder(
-        side: BorderSide(
-      color: Color(0xff000000),
-      style: BorderStyle.none,
-    )),
-  ),
   dialogTheme: const DialogTheme(
       shape: RoundedRectangleBorder(
     side: BorderSide(
@@ -285,7 +258,7 @@ final ThemeData myThemeDark = ThemeData(
   primaryColor: const Color(0xff212121),
   primaryColorLight: const Color(0xff9e9e9e),
   primaryColorDark: const Color(0xff000000),
-  canvasColor: const Color(0xff303030),
+  canvasColor: Colors.transparent,
   scaffoldBackgroundColor: const Color(0xff303030),
   bottomAppBarColor: const Color(0xff424242),
   cardColor: const Color(0xff424242),
@@ -393,93 +366,93 @@ final ThemeData myThemeDark = ThemeData(
       fontStyle: FontStyle.normal,
     ),
   ),
-  inputDecorationTheme: const InputDecorationTheme(
-    labelStyle: TextStyle(
-      color: Color(0xdd000000),
-      fontSize: null,
-      fontWeight: FontWeight.w400,
-      fontStyle: FontStyle.normal,
-    ),
-    helperStyle: TextStyle(
-      color: Color(0xdd000000),
-      fontSize: null,
-      fontWeight: FontWeight.w400,
-      fontStyle: FontStyle.normal,
-    ),
-    hintStyle: TextStyle(
-      color: Color(0xdd000000),
-      fontSize: null,
-      fontWeight: FontWeight.w400,
-      fontStyle: FontStyle.normal,
-    ),
-    errorStyle: TextStyle(
-      color: Color(0xdd000000),
-      fontSize: null,
-      fontWeight: FontWeight.w400,
-      fontStyle: FontStyle.normal,
-    ),
-    errorMaxLines: null,
-    isDense: false,
-    contentPadding: EdgeInsets.only(top: 24, bottom: 16, left: 12, right: 12),
-    isCollapsed: false,
-    prefixStyle: TextStyle(
-      color: Color(0xdd000000),
-      fontSize: null,
-      fontWeight: FontWeight.w400,
-      fontStyle: FontStyle.normal,
-    ),
-    suffixStyle: TextStyle(
-      color: Color(0xdd000000),
-      fontSize: null,
-      fontWeight: FontWeight.w400,
-      fontStyle: FontStyle.normal,
-    ),
-    counterStyle: TextStyle(
-      color: Color(0xdd000000),
-      fontSize: null,
-      fontWeight: FontWeight.w400,
-      fontStyle: FontStyle.normal,
-    ),
-    filled: true,
-    fillColor: Colors.white,
-    floatingLabelBehavior: FloatingLabelBehavior.auto,
-    errorBorder: OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Color(0xff000000),
-          style: BorderStyle.solid,
-        ),
-        borderRadius: BorderRadius.all(Radius.circular(30)),
-        gapPadding: 4),
-    focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Color(0xff000000),
-          style: BorderStyle.solid,
-        ),
-        borderRadius: BorderRadius.all(Radius.circular(30)),
-        gapPadding: 4),
-    focusedErrorBorder: OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Color(0xff000000),
-          style: BorderStyle.solid,
-        ),
-        borderRadius: BorderRadius.all(Radius.circular(30)),
-        gapPadding: 4),
-    disabledBorder: InputBorder.none,
-    enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Color(0xff000000),
-          style: BorderStyle.solid,
-        ),
-        borderRadius: BorderRadius.all(Radius.circular(30)),
-        gapPadding: 4),
-    border: OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Color(0xff000000),
-          style: BorderStyle.solid,
-        ),
-        borderRadius: BorderRadius.all(Radius.circular(30)),
-        gapPadding: 4),
-  ),
+  // inputDecorationTheme: const InputDecorationTheme(
+  //   labelStyle: TextStyle(
+  //     color: Color(0xdd000000),
+  //     fontSize: null,
+  //     fontWeight: FontWeight.w400,
+  //     fontStyle: FontStyle.normal,
+  //   ),
+  //   helperStyle: TextStyle(
+  //     color: Color(0xdd000000),
+  //     fontSize: null,
+  //     fontWeight: FontWeight.w400,
+  //     fontStyle: FontStyle.normal,
+  //   ),
+  //   hintStyle: TextStyle(
+  //     color: Color(0xdd000000),
+  //     fontSize: null,
+  //     fontWeight: FontWeight.w400,
+  //     fontStyle: FontStyle.normal,
+  //   ),
+  //   errorStyle: TextStyle(
+  //     color: Color(0xdd000000),
+  //     fontSize: null,
+  //     fontWeight: FontWeight.w400,
+  //     fontStyle: FontStyle.normal,
+  //   ),
+  //   errorMaxLines: null,
+  //   isDense: false,
+  //   contentPadding: EdgeInsets.only(top: 24, bottom: 16, left: 12, right: 12),
+  //   isCollapsed: false,
+  //   prefixStyle: TextStyle(
+  //     color: Color(0xdd000000),
+  //     fontSize: null,
+  //     fontWeight: FontWeight.w400,
+  //     fontStyle: FontStyle.normal,
+  //   ),
+  //   suffixStyle: TextStyle(
+  //     color: Color(0xdd000000),
+  //     fontSize: null,
+  //     fontWeight: FontWeight.w400,
+  //     fontStyle: FontStyle.normal,
+  //   ),
+  //   counterStyle: TextStyle(
+  //     color: Color(0xdd000000),
+  //     fontSize: null,
+  //     fontWeight: FontWeight.w400,
+  //     fontStyle: FontStyle.normal,
+  //   ),
+  //   filled: true,
+  //   fillColor: Colors.white,
+  //   floatingLabelBehavior: FloatingLabelBehavior.auto,
+  //   errorBorder: OutlineInputBorder(
+  //       borderSide: BorderSide(
+  //         color: Color(0xff000000),
+  //         style: BorderStyle.solid,
+  //       ),
+  //       borderRadius: BorderRadius.all(Radius.circular(30)),
+  //       gapPadding: 4),
+  //   focusedBorder: OutlineInputBorder(
+  //       borderSide: BorderSide(
+  //         color: Color(0xff000000),
+  //         style: BorderStyle.solid,
+  //       ),
+  //       borderRadius: BorderRadius.all(Radius.circular(30)),
+  //       gapPadding: 4),
+  //   focusedErrorBorder: OutlineInputBorder(
+  //       borderSide: BorderSide(
+  //         color: Color(0xff000000),
+  //         style: BorderStyle.solid,
+  //       ),
+  //       borderRadius: BorderRadius.all(Radius.circular(30)),
+  //       gapPadding: 4),
+  //   disabledBorder: InputBorder.none,
+  //   enabledBorder: OutlineInputBorder(
+  //       borderSide: BorderSide(
+  //         color: Color(0xff000000),
+  //         style: BorderStyle.solid,
+  //       ),
+  //       borderRadius: BorderRadius.all(Radius.circular(30)),
+  //       gapPadding: 4),
+  //   border: OutlineInputBorder(
+  //       borderSide: BorderSide(
+  //         color: Color(0xff000000),
+  //         style: BorderStyle.solid,
+  //       ),
+  //       borderRadius: BorderRadius.all(Radius.circular(30)),
+  //       gapPadding: 4),
+  // ),
   iconTheme: const IconThemeData(
     color: Color(0xdd000000),
     opacity: 1,
@@ -515,33 +488,6 @@ final ThemeData myThemeDark = ThemeData(
     indicatorSize: TabBarIndicatorSize.tab,
     labelColor: Color(0xdd000000),
     unselectedLabelColor: Color(0xb2000000),
-  ),
-  chipTheme: const ChipThemeData(
-    backgroundColor: Color(0xff607d8b),
-    brightness: Brightness.light,
-    deleteIconColor: Color(0xde000000),
-    disabledColor: Color(0x0c000000),
-    labelPadding: EdgeInsets.only(top: 0, bottom: 0, left: 8, right: 8),
-    labelStyle: TextStyle(
-      color: Color(0xffbacbcf),
-      fontSize: null,
-      fontWeight: FontWeight.w700,
-      fontStyle: FontStyle.normal,
-    ),
-    padding: EdgeInsets.only(top: 4, bottom: 4, left: 4, right: 4),
-    secondaryLabelStyle: TextStyle(
-      color: Color(0x3d000000),
-      fontSize: null,
-      fontWeight: FontWeight.w700,
-      fontStyle: FontStyle.normal,
-    ),
-    secondarySelectedColor: Color(0x3dffffff),
-    selectedColor: Color(0x3d000000),
-    shape: StadiumBorder(
-        side: BorderSide(
-      color: Color(0xff000000),
-      style: BorderStyle.none,
-    )),
   ),
   dialogTheme: const DialogTheme(
       shape: RoundedRectangleBorder(

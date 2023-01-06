@@ -33,3 +33,11 @@ flutter:
   assets:
     # Add assets from the images directory to the application.
     - assets/images/
+    - assets/images/backgrounds/00000.png
+    - assets/images/backgrounds/00001.png
+    - assets/images/backgrounds/00011.png
+    - assets/images/backgrounds/00012.png
+    - assets/images/backgrounds/00004.png
+    - assets/images/backgrounds/00005.png
+    - assets/images/backgrounds/00006.png
+    - assets/images/backgrounds/00007.png

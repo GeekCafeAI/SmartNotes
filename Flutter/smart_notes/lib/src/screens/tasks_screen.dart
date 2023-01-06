@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_notes/src/providers/tasks.dart';
+import 'package:smart_notes/src/providers/widget_visibility.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({
@@ -14,57 +15,123 @@ class TasksScreen extends StatefulWidget {
 }
 
 class _TasksScreenState extends State<TasksScreen> {
+  final background = const AssetImage("assets/images/backgrounds/00012.png");
+
+  // void searchTags(String query) {
+  //   final tasksData = Provider.of<Tasks>(context, listen: false);
+  //   final tags = tasksData.tags;
+  //
+  //   final suggestions =
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      body: Builder(
-        builder: (context) {
-          return const CustomScrollView(
-            slivers: [
-              TitlePanel(),
-              FilterSearchPanel(),
-              TasksList(),
-            ],
-          );
-        },
-      ),
+      body: Stack(children: [
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(image: background, fit: BoxFit.fill),
+          ),
+        ),
+        Builder(
+          builder: (context) {
+            return const CustomScrollView(
+              slivers: [
+                TitlePanel(),
+                FilterSearchPanel(),
+                TasksList(),
+              ],
+            );
+          },
+        ),
+      ]),
     );
   }
 }
 
-class FilterSearchPanel extends StatelessWidget {
+class FilterSearchPanel extends StatefulWidget {
   const FilterSearchPanel({Key? key}) : super(key: key);
+
+  @override
+  State<FilterSearchPanel> createState() => _FilterSearchPanelState();
+}
+
+class _FilterSearchPanelState extends State<FilterSearchPanel> {
+  final controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    final visibilityData = Provider.of<WidgetVisibility>(context);
+    final searchVisibility = visibilityData.showSearch;
+
     return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 4, left: 4, right: 4),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.deepPurple.shade300,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 4, left: 4, right: 4),
+        child: searchVisibility
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  FilterSearchBar(),
+                ],
+              )
+            : null);
+  }
+}
+
+class FilterSearchBar extends StatelessWidget {
+  const FilterSearchBar({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final visibilityData = Provider.of<WidgetVisibility>(context);
+    final enabled = visibilityData.showSuggestedTags;
+
+    return Stack(children: [
+      Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Wrap(
+          children: [
+            Padding(
+                padding: const EdgeInsets.only(top: 2),
                 child: TextField(
-                    decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Theme.of(context).primaryColor.withOpacity(0.7),
+                  onTap: () {
+                    visibilityData.enableSuggestedTags();
+                  },
+                  onEditingComplete: () {
+                    visibilityData.disableSuggestedTags();
+                  },
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.all(12),
+                    filled: true,
+                    fillColor: Theme.of(context).primaryColor.withOpacity(0.25),
+                    isCollapsed: true,
+                    hintStyle: const TextStyle(fontSize: 25),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide:
+                            const BorderSide(color: Colors.transparent)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide:
+                            const BorderSide(color: Colors.transparent)),
+                    disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide:
+                            BorderSide(color: Theme.of(context).primaryColor)),
+                  ),
                 )),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: const FiltersWrap(),
-              ),
-            ],
-          ),
+            enabled
+                ? const Padding(
+                    padding: EdgeInsets.only(left: 10, right: 10),
+                    child: FiltersWrap(),
+                  )
+                : Container()
+          ],
         ),
-      ),
-    );
+      )
+    ]);
   }
 }
 
@@ -81,30 +148,61 @@ class _TitlePanelState extends State<TitlePanel> {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
+      backgroundColor: Theme.of(context).primaryColor.withOpacity(0.25),
       shape: const ContinuousRectangleBorder(
           borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(30),
-        bottomRight: Radius.circular(30),
+        bottomLeft: Radius.circular(35),
+        bottomRight: Radius.circular(35),
       )),
       floating: true,
       title: const Text(
         "Your Tasks",
         textScaleFactor: 1.5,
       ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 50),
-          child: Container(
-            height: 50,
-            width: 50,
-            decoration: const BoxDecoration(
-                color: Colors.deepPurple, shape: BoxShape.circle),
-            child: const Icon(
-              Icons.search,
-            ),
+      actions: const [SearchButton()],
+    );
+  }
+}
+
+class SearchButton extends StatefulWidget {
+  const SearchButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<SearchButton> createState() => _SearchButtonState();
+}
+
+class _SearchButtonState extends State<SearchButton> {
+  var _enabled = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final visibilityData = Provider.of<WidgetVisibility>(context);
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 50),
+      child: Container(
+        height: 50,
+        width: 50,
+        decoration: BoxDecoration(
+            color: _enabled
+                ? Colors.deepPurple.withOpacity(0.3)
+                : Colors.deepPurple,
+            shape: BoxShape.circle),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () {
+            visibilityData.toggleSearch();
+            setState(() {
+              _enabled = !_enabled;
+            });
+          },
+          child: const Icon(
+            Icons.search,
           ),
-        )
-      ],
+        ),
+      ),
     );
   }
 }
@@ -133,7 +231,10 @@ class _FiltersWrapState extends State<FiltersWrap> {
         children: List.generate(
             tags.length,
             (index) => FilterChip(
-                backgroundColor: Colors.black.withOpacity(0.7),
+                shadowColor: Colors.transparent,
+                backgroundColor:
+                    Theme.of(context).primaryColor.withOpacity(0.25),
+                selectedColor: Colors.white.withOpacity(0.25),
                 label: Text(tags[index]),
                 checkmarkColor: Colors.white,
                 selected: enabledTags.contains(tags[index]),
@@ -161,14 +262,17 @@ class TasksList extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         childCount: tasks.length,
         (context, index) => Card(
-          child: ListTile(
-            textColor: Colors.black,
-            title: Text(tasks[index].text),
-            subtitle: Text(
-              tasks[index].tags,
-              style: const TextStyle(color: Colors.grey),
+          elevation: 0,
+          color: Theme.of(context).primaryColor.withOpacity(0.25),
+          child: GestureDetector(
+            child: ListTile(
+              title: Text(tasks[index].note.text),
+              subtitle: Text(
+                tasks[index].note.tags,
+                style: const TextStyle(color: Colors.grey),
+              ),
+              trailing: const Icon(Icons.more_vert),
             ),
-            trailing: const Icon(Icons.more_vert),
           ),
         ),
       ),

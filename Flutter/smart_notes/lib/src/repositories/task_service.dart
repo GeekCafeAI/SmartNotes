@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 
 import '../models/task_model.dart';
 
-Future<Task> createEntry(String text) async {
-  final body = jsonEncode({"text": text});
+Future<Task> createEntry(String text, String userId) async {
+  final body = jsonEncode({"text": text, "user_id": userId});
   Map<String, String> headers = {'Content-Type': 'application/json'};
 
   var response = await http.post(

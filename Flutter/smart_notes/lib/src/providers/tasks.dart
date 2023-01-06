@@ -3,24 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../models/task_model.dart';
 
 class Tasks with ChangeNotifier {
-  final List<Task> _tasks = [
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-    Task(text: "This a Test", tags: "Test, Test, Test", id: 0),
-  ];
+  final List<Task> _tasks = [];
   final List<String> _tags = [
     "Gym",
     "Work",
@@ -65,7 +48,7 @@ class Tasks with ChangeNotifier {
   void assignTags() {
     List<String> tagsList = [];
     for (var element in _tasks) {
-      var tagsString = element.tags;
+      var tagsString = element.note.tags;
       tagsList.addAll(splitTags(tagsString));
     }
 

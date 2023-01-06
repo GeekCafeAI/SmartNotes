@@ -1,28 +1,77 @@
+import 'dart:convert';
+
 // To parse this JSON data, do
 //
 //     final task = taskFromJson(jsonString);
 
 class Task {
-  Task({required this.tags, required this.text, required this.id});
+  Task({
+    required this.message,
+    required this.note,
+  });
 
-  final String tags;
-  final String text;
-  final int id;
+  final String message;
+  final Note note;
+
+  factory Task.fromRawJson(String str) => Task.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
 
   factory Task.fromJson(Map<String, dynamic> json) => Task(
-        tags: json["tags"] ?? "",
-        text: json["text"] ?? "",
-        id: json["id"] ?? "",
+        message: json["message"] ?? "",
+        note: Note.fromJson(json["note"]),
       );
 
-  Map<String, dynamic> toJson() => {"tags": tags, "text": text, "id": id};
+  Map<String, dynamic> toJson() => {
+        "message": message,
+        "note": note.toJson(),
+      };
+}
 
-  List<String> getTagsAsList() {
-    final splitTags = tags.split(",");
-    final List<String> outPutList = [];
-    for (int i = 0; i < splitTags.length; i++) {
-      outPutList.add(splitTags[i]);
-    }
-    return outPutList;
-  }
+class Note {
+  Note({
+    required this.id,
+    required this.userId,
+    required this.status,
+    required this.text,
+    required this.tags,
+    required this.extractedDate,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  final String id;
+  final String userId;
+  final String status;
+  final String text;
+  final String tags;
+  final String extractedDate;
+  final String createdAt;
+  final String updatedAt;
+
+  factory Note.fromRawJson(String str) => Note.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory Note.fromJson(Map<String, dynamic> json) => Note(
+        id: json["id"],
+        userId: json["user_id"],
+        status: json["status"],
+        text: json["text"],
+        tags: json["tags"],
+        extractedDate: json["extracted_date"],
+        createdAt: json["created_at"],
+        updatedAt: json["updated_at"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "user_id": userId,
+        "status": status,
+        "text": text,
+        "tags": tags,
+        "extracted_date": extractedDate,
+        "created_at": createdAt,
+        "updated_at": updatedAt,
+      };
 }

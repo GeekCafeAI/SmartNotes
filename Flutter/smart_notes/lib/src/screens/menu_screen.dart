@@ -57,7 +57,7 @@ class _MenuScreenState extends State<MenuScreen> {
   var _addedText;
   var _addedTags;
   final _deviceData = <String?>{};
-  final menuBackground = const NetworkImage("https://picsum.photos/412/892/");
+  final background = const AssetImage("assets/images/backgrounds/00012.png");
 
   @override
   Widget build(BuildContext context) {
@@ -71,9 +71,14 @@ class _MenuScreenState extends State<MenuScreen> {
         extendBodyBehindAppBar: true,
         extendBody: true,
         appBar: AppBar(
-          excludeHeaderSemantics: false,
-          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.7),
-          title: const Text('Main Menu'),
+          elevation: 0,
+          shape: const ContinuousRectangleBorder(
+              borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(35),
+            bottomRight: Radius.circular(35),
+          )),
+          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.25),
+          title: const Text('Main Menu', textScaleFactor: 1.5),
           actions: [
             IconButton(
               icon: const Icon(Icons.settings),
@@ -85,7 +90,7 @@ class _MenuScreenState extends State<MenuScreen> {
         ),
         body: Container(
           decoration: BoxDecoration(
-              image: DecorationImage(image: menuBackground, fit: BoxFit.fill)),
+              image: DecorationImage(image: background, fit: BoxFit.fill)),
           child: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -107,17 +112,17 @@ class _MenuScreenState extends State<MenuScreen> {
                               },
                               icon: const Icon(Icons.clear)),
                           border: InputBorder.none,
-                          // focusedBorder: OutlineInputBorder(
-                          //     borderRadius: BorderRadius.circular(30),
-                          //     borderSide:
-                          //         const BorderSide(color: Colors.black45)),
-                          // enabledBorder: OutlineInputBorder(
-                          //     borderRadius: BorderRadius.circular(30),
-                          //     borderSide:
-                          //         const BorderSide(color: Colors.black)),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide:
+                                  const BorderSide(color: Colors.transparent)),
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide:
+                                  const BorderSide(color: Colors.transparent)),
                           filled: true,
                           fillColor:
-                              Theme.of(context).primaryColor.withOpacity(0.7),
+                              Theme.of(context).primaryColor.withOpacity(0.25),
                           hintText: "Enter Your Thought\n\n\n\n\n",
                           hintStyle: const TextStyle(decorationThickness: 200)),
                     ),
@@ -131,16 +136,17 @@ class _MenuScreenState extends State<MenuScreen> {
                       MaterialButton(
                         minWidth: 200,
                         height: 50,
-                        color: Theme.of(context).primaryColor.withOpacity(0.7),
+                        color: Theme.of(context).primaryColor.withOpacity(0.25),
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
                         onPressed: () {
-                          createEntry(_textController.text).then((result) {
+                          createEntry(_textController.text, "Testing1")
+                              .then((result) {
                             Task newTask = Task(
-                              tags: result.tags,
-                              text: result.text,
-                              id: result.id,
+                              note: result.note,
+                              message: _textController.text,
                             );
                             tasksProvider.addTask(newTask);
                           });
@@ -154,14 +160,6 @@ class _MenuScreenState extends State<MenuScreen> {
               ],
             ),
           ),
-        )
-
-        // Navigate to the details page. If the user leaves and returns to
-        // the app after it has been killed while running in the
-        // background, the navigation stack is restored.
-        // Navigator.restorablePushNamed(
-        //   context,
-        //   SampleItemDetailsView.routeName,
-        );
+        ));
   }
 }
