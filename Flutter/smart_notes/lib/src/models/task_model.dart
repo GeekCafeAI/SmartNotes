@@ -35,17 +35,15 @@ class Note {
     required this.status,
     required this.text,
     required this.tags,
-    required this.extractedDate,
     required this.createdAt,
     required this.updatedAt,
   });
 
-  final String id;
+  final int id;
   final String userId;
   final String status;
   final String text;
   final String tags;
-  final String extractedDate;
   final String createdAt;
   final String updatedAt;
 
@@ -59,7 +57,6 @@ class Note {
         status: json["status"],
         text: json["text"],
         tags: json["tags"],
-        extractedDate: json["extracted_date"],
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
       );
@@ -70,7 +67,6 @@ class Note {
         "status": status,
         "text": text,
         "tags": tags,
-        "extracted_date": extractedDate,
         "created_at": createdAt,
         "updated_at": updatedAt,
       };

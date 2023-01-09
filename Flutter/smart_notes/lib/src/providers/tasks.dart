@@ -2,16 +2,30 @@ import 'package:flutter/foundation.dart';
 
 import '../models/task_model.dart';
 
+final Note myNote = Note(
+    id: 2,
+    userId: "Testing",
+    status: "Testing",
+    text: "Test",
+    tags: "test, test, test",
+    createdAt: "test",
+    updatedAt: "test");
+
+final Task myTask = Task(message: "This is a test", note: myNote);
+
 class Tasks with ChangeNotifier {
-  final List<Task> _tasks = [];
+  final List<Task> _tasks = [myTask, myTask, myTask, myTask];
   final List<String> _tags = [
     "Gym",
-    "Work",
+    "Task",
     "Reminder",
-    "Meditation",
-    "criminal activity",
-    "lame jokes",
-    "stupid ideas",
+    "goal",
+    "Recurring",
+    "Gym1",
+    "Task1",
+    "Reminder1",
+    "goal1",
+    "Recurring1",
   ];
 
   final List<String> _enabledTags = [];
@@ -46,23 +60,9 @@ class Tasks with ChangeNotifier {
   }
 
   void assignTags() {
-    List<String> tagsList = [];
     for (var element in _tasks) {
-      var tagsString = element.note.tags;
-      tagsList.addAll(splitTags(tagsString));
+      var tagsList = element.note.tags.split(",");
+      _tags.addAll(tagsList);
     }
-
-    _tags.addAll(tagsList);
-  }
-
-  // Converts comma separated string into a list
-  List<String> splitTags(String tags) {
-    final splitTags = tags.split(",");
-    // final List<String> myTags = [];
-    // for (int i = 0; i < splitTags.length; i++) {
-    //   myTags.add(splitTags[i]);
-    // }
-
-    return splitTags;
   }
 }

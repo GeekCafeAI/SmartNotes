@@ -54,8 +54,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   final _textController = TextEditingController();
-  var _addedText;
-  var _addedTags;
   final _deviceData = <String?>{};
   final background = const AssetImage("assets/images/backgrounds/00012.png");
 
@@ -149,6 +147,7 @@ class _MenuScreenState extends State<MenuScreen> {
                               message: _textController.text,
                             );
                             tasksProvider.addTask(newTask);
+                            tasksProvider.assignTags();
                           });
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         },
