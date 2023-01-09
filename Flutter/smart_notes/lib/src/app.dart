@@ -6,7 +6,6 @@ import 'package:smart_notes/src/providers/settings/settings_controller.dart';
 import 'package:smart_notes/src/providers/widget_visibility.dart';
 import 'package:smart_notes/src/screens/menu_screen.dart';
 import 'package:smart_notes/src/screens/tasks_screen.dart';
-import 'package:smart_notes/src/screens/testing_screen.dart';
 import 'package:smart_notes/src/theme.dart';
 
 import './providers/tasks.dart';
@@ -83,7 +82,7 @@ class MyApp extends StatelessWidget {
             home: PageView(
               pageSnapping: true,
               controller: _controller,
-              children: const [TestingScreen(), MenuScreen(), TasksScreen()],
+              children: const [MenuScreen(), TasksScreen()],
             ),
           ),
         );

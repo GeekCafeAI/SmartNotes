@@ -39,6 +39,7 @@ class _TasksScreenState extends State<TasksScreen> {
             return const CustomScrollView(
               slivers: [
                 TitlePanel(),
+                FavouriteFiltersTab(),
                 FilterSearchPanel(),
                 TasksList(),
               ],
@@ -67,13 +68,69 @@ class _FilterSearchPanelState extends State<FilterSearchPanel> {
 
     return SliverToBoxAdapter(
         child: searchVisibility
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  FilterSearchBar(),
-                ],
+            ? Container(
+                margin: const EdgeInsets.all(4),
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                  Radius.circular(25),
+                )),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    FilterSearchBar(),
+                  ],
+                ),
               )
             : null);
+  }
+}
+
+class FavouriteFiltersTab extends StatefulWidget {
+  const FavouriteFiltersTab({Key? key}) : super(key: key);
+
+  @override
+  State<FavouriteFiltersTab> createState() => _FavouriteFiltersTabState();
+}
+
+class _FavouriteFiltersTabState extends State<FavouriteFiltersTab> {
+  var _expanded = false;
+  final collapsedArrow = Icons.arrow_drop_down_rounded;
+  final expandedArrow = Icons.arrow_drop_up_rounded;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        alignment: WrapAlignment.spaceEvenly,
+        // mainAxisSize: MainAxisSize.max,
+        // crossAxisAlignment: CrossAxisAlignment.start,
+        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          !_expanded
+              ? const SizedBox(
+                  width: 350,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: FiltersWrap(),
+                  ),
+                )
+              : const FiltersWrap(),
+          InkWell(
+            onTap: () {
+              setState(() {
+                _expanded = !_expanded;
+              });
+            },
+            child: Icon(
+              _expanded ? expandedArrow : collapsedArrow,
+              size: 50,
+              color: Colors.black,
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -187,11 +244,11 @@ class _SearchButtonState extends State<SearchButton> {
         width: 50,
         decoration: BoxDecoration(
             color: _enabled
-                ? Colors.deepPurple.withOpacity(0.3)
-                : Colors.deepPurple,
+                ? Colors.deepPurple
+                : Colors.deepPurple.withOpacity(0.3),
             shape: BoxShape.circle),
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(50),
           onTap: () {
             visibilityData.toggleSearch();
             setState(() {
@@ -264,15 +321,13 @@ class TasksList extends StatelessWidget {
         (context, index) => Card(
           elevation: 0,
           color: Theme.of(context).primaryColor.withOpacity(0.25),
-          child: GestureDetector(
-            child: ListTile(
-              title: Text(tasks[index].note.text),
-              subtitle: Text(
-                tasks[index].note.tags,
-                style: const TextStyle(color: Colors.grey),
-              ),
-              trailing: const Icon(Icons.more_vert),
+          child: ListTile(
+            title: Text(tasks[index].note.text),
+            subtitle: Text(
+              tasks[index].note.tags,
+              style: const TextStyle(color: Colors.grey),
             ),
+            trailing: const Icon(Icons.more_vert),
           ),
         ),
       ),
