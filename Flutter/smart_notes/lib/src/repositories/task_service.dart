@@ -9,7 +9,7 @@ Future<Task> createEntry(String text, String userId) async {
   Map<String, String> headers = {'Content-Type': 'application/json'};
 
   var response = await http.post(
-    Uri.parse('http://edvardasdlugauskas.eu.pythonanywhere.com/classify'),
+    Uri.parse('http://10.0.2.2:5000/notes'),
     headers: headers,
     body: body,
   );

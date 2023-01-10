@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_notes/src/screens/tasks_screen.dart';
 
 class TestingScreen extends StatefulWidget {
   const TestingScreen({super.key});
@@ -10,6 +11,8 @@ class TestingScreen extends StatefulWidget {
 
 class _TestingScreenState extends State<TestingScreen> {
   bool showWidget = false;
+  bool expanded = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,28 +22,53 @@ class _TestingScreenState extends State<TestingScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           showWidget
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    MaterialButton(
-                      onPressed: () {},
-                      child: const Icon(Icons.ac_unit),
-                    ),
-                    MaterialButton(
-                      onPressed: () {},
-                      child: const Icon(Icons.accessible),
-                    ),
-                    MaterialButton(
-                      onPressed: () {},
-                      child: const Icon(Icons.backpack),
-                    ),
-                    MaterialButton(
-                      onPressed: () {},
-                      child: const Icon(Icons.cached),
-                    ),
-                  ],
-                )
-              : Container(),
+              ? expanded
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        const FiltersWrap(),
+                        MaterialButton(
+                          onPressed: () {
+                            setState(() {
+                              expanded = !expanded;
+                            });
+                          },
+                          child: const Icon(
+                            Icons.emoji_emotions_outlined,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        const SizedBox(
+                          width: 300,
+                          child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: FiltersWrap()),
+                        ),
+                        MaterialButton(
+                          onPressed: () {
+                            setState(() {
+                              expanded = !expanded;
+                            });
+                          },
+                          child: const Icon(
+                            Icons.expand_circle_down_outlined,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    )
+              : Container(
+                  color: Colors.purpleAccent,
+                  child: const Text('This widget is Collapsed'),
+                ),
           MaterialButton(
             onPressed: () {
               setState(() {
@@ -49,6 +77,17 @@ class _TestingScreenState extends State<TestingScreen> {
             },
             child: const Icon(
               Icons.close,
+              color: Colors.white,
+            ),
+          ),
+          MaterialButton(
+            onPressed: () {
+              setState(() {
+                expanded = !expanded;
+              });
+            },
+            child: const Icon(
+              Icons.expand_circle_down_outlined,
               color: Colors.white,
             ),
           ),
