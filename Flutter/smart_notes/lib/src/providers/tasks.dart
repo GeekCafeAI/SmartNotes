@@ -14,7 +14,24 @@ final Note myNote = Note(
 final Task myTask = Task(message: "This is a test", note: myNote);
 
 class Tasks with ChangeNotifier {
-  final List<Task> _tasks = [myTask, myTask, myTask, myTask];
+  final List<Task> _tasks = [
+    myTask,
+    myTask,
+    myTask,
+    myTask,
+    myTask,
+    myTask,
+    myTask,
+    myTask,
+    myTask,
+    myTask,
+    myTask,
+    myTask,
+    myTask,
+    myTask,
+    myTask
+  ];
+
   final List<String> _tags = [
     "Gym",
     "Task",
@@ -26,6 +43,16 @@ class Tasks with ChangeNotifier {
     "Reminder1",
     "goal1",
     "Recurring1",
+    "Gym2",
+    "Task2",
+    "Reminder2",
+    "goal2",
+    "Recurring2",
+    "Gym12",
+    "Task12",
+    "Reminder12",
+    "goal12",
+    "Recurring12",
   ];
 
   final List<String> _enabledTags = [];

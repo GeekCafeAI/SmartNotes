@@ -93,44 +93,62 @@ class FavouriteFiltersTab extends StatefulWidget {
 }
 
 class _FavouriteFiltersTabState extends State<FavouriteFiltersTab> {
+  final _collapsedArrow = Icons.arrow_drop_down_rounded;
+  final _expandedArrow = Icons.arrow_drop_up_rounded;
   var _expanded = false;
-  final collapsedArrow = Icons.arrow_drop_down_rounded;
-  final expandedArrow = Icons.arrow_drop_up_rounded;
 
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
-      child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        alignment: WrapAlignment.spaceEvenly,
-        // mainAxisSize: MainAxisSize.max,
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        // mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          !_expanded
-              ? const SizedBox(
-                  width: 350,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: FiltersWrap(),
+        child: _expanded
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const FiltersWrap(),
+                  MaterialButton(
+                    onPressed: () {
+                      setState(() {
+                        _expanded = !_expanded;
+                      });
+                    },
+                    child: Icon(
+                      _expandedArrow,
+                      size: 50,
+                      color: Colors.purpleAccent,
+                    ),
                   ),
-                )
-              : const FiltersWrap(),
-          InkWell(
-            onTap: () {
-              setState(() {
-                _expanded = !_expanded;
-              });
-            },
-            child: Icon(
-              _expanded ? expandedArrow : collapsedArrow,
-              size: 50,
-              color: Colors.black,
-            ),
-          )
-        ],
-      ),
-    );
+                ],
+              )
+            : Padding(
+                padding: const EdgeInsets.only(left: 25),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const SizedBox(
+                      width: 250,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: FiltersWrap(),
+                      ),
+                    ),
+                    MaterialButton(
+                      onPressed: () {
+                        setState(() {
+                          _expanded = !_expanded;
+                        });
+                      },
+                      child: Icon(
+                        _collapsedArrow,
+                        size: 50,
+                        color: Colors.purple,
+                      ),
+                    ),
+                  ],
+                ),
+              ));
   }
 }
 
