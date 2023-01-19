@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_notes/src/providers/settings/settings_controller.dart';
-import 'package:smart_notes/src/providers/settings/settings_service.dart';
+import 'package:smart_notes/src/repositories/settings_service.dart';
 
 import 'src/app.dart';
 

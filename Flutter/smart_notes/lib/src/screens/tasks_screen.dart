@@ -39,8 +39,10 @@ class _TasksScreenState extends State<TasksScreen> {
             return const CustomScrollView(
               slivers: [
                 TitlePanel(),
-                FavouriteFiltersTab(),
-                FilterSearchPanel(),
+                // FavouriteFiltersTab(),
+                SliverToBoxAdapter(
+                  child: FiltersWrap(),
+                ),
                 TasksList(),
               ],
             );
@@ -66,22 +68,23 @@ class _FilterSearchPanelState extends State<FilterSearchPanel> {
     final visibilityData = Provider.of<WidgetVisibility>(context);
     final searchVisibility = visibilityData.showSearch;
 
-    return SliverToBoxAdapter(
-        child: searchVisibility
-            ? Container(
-                margin: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                  Radius.circular(25),
-                )),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    FilterSearchBar(),
-                  ],
-                ),
-              )
-            : null);
+    return Container(
+      child: searchVisibility
+          ? Container(
+              margin: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                Radius.circular(25),
+              )),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  FilterSearchBar(),
+                ],
+              ),
+            )
+          : null,
+    );
   }
 }
 
@@ -99,7 +102,7 @@ class _FavouriteFiltersTabState extends State<FavouriteFiltersTab> {
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
+    return Container(
         child: _expanded
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -222,6 +225,9 @@ class TitlePanel extends StatefulWidget {
 class _TitlePanelState extends State<TitlePanel> {
   @override
   Widget build(BuildContext context) {
+    final visibilityData = Provider.of<WidgetVisibility>(context);
+    final displaySearch = visibilityData.showSearch;
+
     return SliverAppBar(
       backgroundColor: Theme.of(context).primaryColor.withOpacity(0.25),
       shape: const ContinuousRectangleBorder(
@@ -292,6 +298,8 @@ class FiltersWrap extends StatefulWidget {
 }
 
 class _FiltersWrapState extends State<FiltersWrap> {
+  final tagsEnabled = false;
+
   @override
   Widget build(BuildContext context) {
     final tasksData = Provider.of<Tasks>(context, listen: true);
@@ -316,8 +324,10 @@ class _FiltersWrapState extends State<FiltersWrap> {
                 onSelected: (val) {
                   if (val) {
                     tasksData.enableTag(tags[index]);
+                    tasksData.filterNotes();
                   } else {
                     tasksData.disableTag(index);
+                    tasksData.removeFilter(tags[index]);
                   }
                 })),
       ),
@@ -325,30 +335,57 @@ class _FiltersWrapState extends State<FiltersWrap> {
   }
 }
 
-class TasksList extends StatelessWidget {
+class TasksList extends StatefulWidget {
   const TasksList({Key? key}) : super(key: key);
 
+  @override
+  State<TasksList> createState() => _TasksListState();
+}
+
+class _TasksListState extends State<TasksList> {
   @override
   Widget build(BuildContext context) {
     final taskData = Provider.of<Tasks>(context);
     final tasks = taskData.tasks;
+    final enabledTags = taskData.enabledTags;
+    final filteredNoteList = taskData.filteredNotesList;
 
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        childCount: tasks.length,
-        (context, index) => Card(
-          elevation: 0,
-          color: Theme.of(context).primaryColor.withOpacity(0.25),
-          child: ListTile(
-            title: Text(tasks[index].note.text),
-            subtitle: Text(
-              tasks[index].note.tags,
-              style: const TextStyle(color: Colors.grey),
+    if (enabledTags.isEmpty) {
+      return SliverList(
+        delegate: SliverChildBuilderDelegate(
+          childCount: tasks.length,
+          (context, index) => Card(
+            elevation: 0,
+            color: Theme.of(context).primaryColor.withOpacity(0.25),
+            child: ListTile(
+              title: Text(tasks[index].note.text),
+              subtitle: Text(
+                tasks[index].note.tags,
+                style: const TextStyle(color: Colors.grey),
+              ),
+              trailing: const Icon(Icons.more_vert),
             ),
-            trailing: const Icon(Icons.more_vert),
           ),
         ),
-      ),
-    );
+      );
+    } else {
+      return SliverList(
+        delegate: SliverChildBuilderDelegate(
+          childCount: filteredNoteList.length,
+          (context, index) => Card(
+            elevation: 0,
+            color: Theme.of(context).primaryColor.withOpacity(0.25),
+            child: ListTile(
+              title: Text(filteredNoteList[index].note.text),
+              subtitle: Text(
+                filteredNoteList[index].note.tags,
+                style: const TextStyle(color: Colors.grey),
+              ),
+              trailing: const Icon(Icons.more_vert),
+            ),
+          ),
+        ),
+      );
+    }
   }
 }

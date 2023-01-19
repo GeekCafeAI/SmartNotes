@@ -9,15 +9,17 @@ Future<Task> createEntry(String text, String userId) async {
   Map<String, String> headers = {'Content-Type': 'application/json'};
 
   var response = await http.post(
-    Uri.parse('http://10.0.2.2:5000/notes'),
-    headers: headers,
-    body: body,
-  );
+      Uri.parse('http://edvardasdlugauskas.eu.pythonanywhere.com/notes'),
+      headers: headers,
+      body: body);
+
   if (response.statusCode == 200) {
     final item = json.decode(response.body);
     var result = Task.fromJson(item);
     return result;
   } else {
+    print(response.statusCode);
+    print(response.body);
     throw Exception("Something went wrong during Post request");
   }
 }
