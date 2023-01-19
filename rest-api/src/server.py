@@ -137,5 +137,5 @@ def notes_delete():
 
 def note_to_response(note):
     result = note.to_dict()
-    result.tags = result.tags.split(",")
+    result["tags"] = result["tags"].split(",") if result["tags"] is not None else None
     return result
