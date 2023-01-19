@@ -69,10 +69,10 @@ def notes_get():
             "note": note.to_dict(),
         }
     else:
-        all_texts = datastore.get_all_notes(data["user_id"])
+        all_notes = datastore.get_all_notes(data["user_id"])
         return {
             "message": "Successfully retrieved notes!",
-            "notes": [t.to_dict() for t in all_texts],
+            "notes": [note_to_response(t) for t in all_notes],
         }
 
 
@@ -87,7 +87,9 @@ def notes_put():
     if note is None:
         return bad_request(f"Cannot update note with requested parameters")
 
-    return {"message": "Successfully updated note!", "note": note.to_dict()}
+    response_note = note_to_response(note)
+
+    return {"message": "Successfully updated note!", "note": response_note}
 
 
 @app.post("/notes")
@@ -103,6 +105,8 @@ def notes_post():
 
     note = datastore.get_note(note.id, data["user_id"])
 
+    response_note = note_to_response(note)
+
     ## Uncomment for message queue
     # get_tags.send(
     #     tagged_text.id, data_json["text"]
@@ -112,7 +116,7 @@ def notes_post():
     #     "id": tagged_text.id,
     # }
 
-    return {"message": "Successfully created note!", "note": note.to_dict()}
+    return {"message": "Successfully created note!", "note": response_note}
 
 
 @app.delete("/notes")
@@ -126,4 +130,12 @@ def notes_delete():
     if note is None:
         return bad_request(f"Cannot delete note with requested parameters")
 
-    return {"message": "Successfully deleted note!", "note": note.to_dict()}
+    response_note = note_to_response(note)
+
+    return {"message": "Successfully deleted note!", "note": response_note}
+
+
+def note_to_response(note):
+    result = note.to_dict()
+    result.tags = result.tags.split(",")
+    return result

@@ -29,7 +29,6 @@ def get_tags_sync(
     logger.info("Started calculation")
     datastore.start_note_tagging(request_id, user_id)
 
-    # TODO: change to GPT3 function
     record = get_tags_and_date(text)
     tags = record["tags"]
     result = ",".join(tags)

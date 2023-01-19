@@ -9,23 +9,23 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/.dart_tool/flutter_gen/.pub" />
-      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/.dart_tool/flutter_gen/.dart_tool" />
-      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/.dart_tool/flutter_gen/build" />
-      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/.pub" />
-      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/.dart_tool" />
-      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/build" />
-      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/linux/flutter/ephemeral/.plugin_symlinks/device_info_plus_linux/.dart_tool" />
-      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/linux/flutter/ephemeral/.plugin_symlinks/device_info_plus_linux/.pub" />
-      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/linux/flutter/ephemeral/.plugin_symlinks/device_info_plus_linux/build" />
-      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/windows/flutter/ephemeral/.plugin_symlinks/device_info_plus_windows/.pub" />
-      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/windows/flutter/ephemeral/.plugin_symlinks/device_info_plus_windows/build" />
-      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/windows/flutter/ephemeral/.plugin_symlinks/device_info_plus_windows/.dart_tool" />
-      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/android/.gradle" />
-      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/linux/flutter/ephemeral" />
-      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/macos/Flutter/ephemeral" />
       <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/windows/flutter/ephemeral" />
+      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/macos/Flutter/ephemeral" />
+      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/linux/flutter/ephemeral" />
+      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/android/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/windows/flutter/ephemeral/.plugin_symlinks/device_info_plus_windows/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/windows/flutter/ephemeral/.plugin_symlinks/device_info_plus_windows/build" />
+      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/.dart_tool/flutter_gen/build" />
+      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/windows/flutter/ephemeral/.plugin_symlinks/device_info_plus_windows/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/build" />
+      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/linux/flutter/ephemeral/.plugin_symlinks/device_info_plus_linux/build" />
+      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/linux/flutter/ephemeral/.plugin_symlinks/device_info_plus_linux/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/linux/flutter/ephemeral/.plugin_symlinks/device_info_plus_linux/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/.dart_tool/flutter_gen/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/Flutter/smart_notes/.dart_tool" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 32 Platform" jdkType="Android SDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Dart SDK" level="project" />
     <orderEntry type="library" name="Dart Packages" level="project" />
