@@ -56,6 +56,7 @@ class _MenuScreenState extends State<MenuScreen> {
   final _textController = TextEditingController();
   final _deviceData = <String?>{};
   final background = const AssetImage("assets/images/backgrounds/00012.png");
+  bool _buttonEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -95,19 +96,26 @@ class _MenuScreenState extends State<MenuScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Text("$_addedText - $_addedTags"),
                 Flexible(
                   flex: 30,
                   child: SizedBox(
                     height: 175,
                     width: 300,
                     child: TextField(
+                      onChanged: (text) {
+                        setState(() {
+                          _textController.text.isNotEmpty
+                              ? _buttonEnabled = true
+                              : _buttonEnabled = false;
+                        });
+                      },
                       controller: _textController,
                       maxLines: null,
                       decoration: InputDecoration(
                           suffixIcon: IconButton(
                               onPressed: () {
                                 _textController.clear();
+                                setState(() => _buttonEnabled = false);
                               },
                               icon: const Icon(Icons.clear)),
                           border: InputBorder.none,
@@ -140,19 +148,22 @@ class _MenuScreenState extends State<MenuScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        onPressed: () {
-                          createEntry(_textController.text, "Testing1")
-                              .then((result) {
-                            Task newTask = Task(
-                              note: result.note,
-                              message: _textController.text,
-                            );
-                            tasksProvider.addTask(newTask);
-                            tasksProvider.assignTags();
-                            _textController.clear();
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        },
+                        onPressed: _buttonEnabled
+                            ? () {
+                                createEntry(_textController.text, "Testing1")
+                                    .then((result) {
+                                  Task newTask = Task(
+                                    note: result.note,
+                                    message: _textController.text,
+                                  );
+                                  tasksProvider.addTask(newTask);
+                                  tasksProvider.assignTags();
+                                  _textController.clear();
+                                });
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              }
+                            : null,
                         child: const Center(child: Text('Submit')),
                       ),
                     ],
