@@ -64,6 +64,7 @@ class _MenuScreenState extends State<MenuScreen> {
     );
 
     final tasksProvider = Provider.of<Tasks>(context);
+    tasksProvider.assignTags();
 
     return Scaffold(
         extendBodyBehindAppBar: true,
@@ -148,6 +149,7 @@ class _MenuScreenState extends State<MenuScreen> {
                             );
                             tasksProvider.addTask(newTask);
                             tasksProvider.assignTags();
+                            _textController.clear();
                           });
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         },

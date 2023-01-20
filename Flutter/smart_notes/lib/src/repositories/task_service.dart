@@ -9,9 +9,10 @@ Future<Task> createEntry(String text, String userId) async {
   Map<String, String> headers = {'Content-Type': 'application/json'};
 
   var response = await http.post(
-      Uri.parse('http://edvardasdlugauskas.eu.pythonanywhere.com/notes'),
-      headers: headers,
-      body: body);
+    Uri.parse('http://edvardasdlugauskas.eu.pythonanywhere.com/notes'),
+    headers: headers,
+    body: body,
+  );
 
   if (response.statusCode == 200) {
     final item = json.decode(response.body);

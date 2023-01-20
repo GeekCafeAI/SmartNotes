@@ -4,79 +4,86 @@ import 'package:flutter/foundation.dart';
 
 import '../models/task_model.dart';
 
-// final Note myNote1 = Note(
-//   id: 2,
-//   userId: "Testing",
-//   status: "Testing",
-//   text: "Every year try something new",
-//   tags: "goal, idea, recurring",
-//   createdAt: "test",
-//   updatedAt: "test",
-// );
-//
-// final Note myNote2 = Note(
-//   id: 2,
-//   userId: "Testing",
-//   status: "Testing",
-//   text: "Bake a cake tomorrow",
-//   tags: "baking, reminder, goal",
-//   createdAt: "test",
-//   updatedAt: "test",
-// );
-//
-// final Note myNote3 = Note(
-//   id: 2,
-//   userId: "Testing",
-//   status: "Testing",
-//   text: "Build a robot",
-//   tags: "goal, building",
-//   createdAt: "test",
-//   updatedAt: "test",
-// );
-//
-// final Task task1 = Task(message: myNote1.text, note: myNote1);
-// final Task task2 = Task(message: myNote2.text, note: myNote2);
-// final Task task3 = Task(message: myNote3.text, note: myNote3);
+final Note myNote1 = Note(
+  id: 2,
+  userId: "Testing",
+  status: "Testing",
+  text: "Every year try something new",
+  tags: ["goal", "idea", "recurring"],
+  createdAt: "test",
+  updatedAt: "test",
+);
+
+final Note myNote2 = Note(
+  id: 2,
+  userId: "Testing",
+  status: "Testing",
+  text: "Bake a cake tomorrow",
+  tags: ["baking", "reminder", "goal"],
+  createdAt: "test",
+  updatedAt: "test",
+);
+
+final Note myNote3 = Note(
+  id: 2,
+  userId: "Testing",
+  status: "Testing",
+  text: "Build a robot",
+  tags: ["goal", "building"],
+  createdAt: "test",
+  updatedAt: "test",
+);
+
+final Task task1 = Task(message: myNote1.text, note: myNote1);
+final Task task2 = Task(message: myNote2.text, note: myNote2);
+final Task task3 = Task(message: myNote3.text, note: myNote3);
 
 class Tasks with ChangeNotifier {
   final List<Task> _notes = [];
-
   final List<String> _tags = [];
 
   final List<String> _enabledTags = [];
-  final Map<String, List<Task>> _filteredNotes = {};
+  final Map<String, List<Task>> _filteredNotesMap = {};
   List<Task> _filteredNotesList = [];
 
-  void filterNotes() {
+  void mapFilters() {
+    // Add filters to a map
     for (int i = 0; i < _enabledTags.length; i++) {
-      _filteredNotes[_enabledTags[i]] = _notes
+      _filteredNotesMap[_enabledTags[i]] = _notes
           .where((element) => element.note.tags.contains(_enabledTags[i]))
           .toList();
     }
-    print(_filteredNotes);
-    print(enabledTags);
-    addFiltersToList();
-    notifyListeners();
-  }
-
-  void addFiltersToList() {
+    // Add filters to list
     List<Task> sortedNotes = [];
-
     for (List<Task> value in filteredNotes.values) {
       for (int i = 0; i < value.length; i++) {
         sortedNotes.add(value[i]);
       }
     }
+
+    // Remove duplicate tasks
     _filteredNotesList = sortedNotes.toSet().toList();
     notifyListeners();
   }
+
+  // void addFiltersToList() {
+  //   List<Task> sortedNotes = [];
+  //
+  //   for (List<Task> value in filteredNotes.values) {
+  //     for (int i = 0; i < value.length; i++) {
+  //       sortedNotes.add(value[i]);
+  //     }
+  //   }
+  //   _filteredNotesList = sortedNotes.toSet().toList();
+  //   notifyListeners();
+  // }
 
   List<Task> get filteredNotesList {
     return [..._filteredNotesList];
   }
 
   Map get filteredNotes {
-    return _filteredNotes;
+    return _filteredNotesMap;
   }
 
   List<String> get enabledTags {
@@ -85,7 +92,6 @@ class Tasks with ChangeNotifier {
 
   void removeFilter(String tag) {
     filteredNotes.removeWhere((key, value) => tag == key);
-    filterNotes();
     notifyListeners();
   }
 
@@ -116,8 +122,10 @@ class Tasks with ChangeNotifier {
 
   void assignTags() {
     for (var element in _notes) {
-      var tagsList = element.note.tags.split(",");
-      _tags.addAll(tagsList);
+      var tagsList = element.note.tags;
+      for (var element in tagsList) {
+        _tags.add(element);
+      }
     }
   }
 

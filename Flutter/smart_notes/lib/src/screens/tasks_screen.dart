@@ -319,16 +319,16 @@ class _FiltersWrapState extends State<FiltersWrap> {
                     Theme.of(context).primaryColor.withOpacity(0.25),
                 selectedColor: Colors.white.withOpacity(0.25),
                 label: Text(tags[index]),
-                checkmarkColor: Colors.white,
+                showCheckmark: false,
                 selected: enabledTags.contains(tags[index]),
                 onSelected: (val) {
                   if (val) {
                     tasksData.enableTag(tags[index]);
-                    tasksData.filterNotes();
                   } else {
                     tasksData.disableTag(index);
                     tasksData.removeFilter(tags[index]);
                   }
+                  tasksData.mapFilters();
                 })),
       ),
     );
@@ -350,6 +350,27 @@ class _TasksListState extends State<TasksList> {
     final enabledTags = taskData.enabledTags;
     final filteredNoteList = taskData.filteredNotesList;
 
+    if (tasks.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 200),
+          child: Column(
+            children: [
+              Icon(
+                Icons.outlet,
+                size: 100,
+                color: Theme.of(context).disabledColor,
+              ),
+              Text(
+                "Uhh-oh. No notes found",
+                textScaleFactor: 2,
+                style: TextStyle(color: Theme.of(context).disabledColor),
+              )
+            ],
+          ),
+        ),
+      );
+    }
     if (enabledTags.isEmpty) {
       return SliverList(
         delegate: SliverChildBuilderDelegate(
@@ -360,7 +381,7 @@ class _TasksListState extends State<TasksList> {
             child: ListTile(
               title: Text(tasks[index].note.text),
               subtitle: Text(
-                tasks[index].note.tags,
+                tasks[index].note.tags.toString(),
                 style: const TextStyle(color: Colors.grey),
               ),
               trailing: const Icon(Icons.more_vert),
@@ -378,7 +399,7 @@ class _TasksListState extends State<TasksList> {
             child: ListTile(
               title: Text(filteredNoteList[index].note.text),
               subtitle: Text(
-                filteredNoteList[index].note.tags,
+                filteredNoteList[index].note.tags.toString(),
                 style: const TextStyle(color: Colors.grey),
               ),
               trailing: const Icon(Icons.more_vert),

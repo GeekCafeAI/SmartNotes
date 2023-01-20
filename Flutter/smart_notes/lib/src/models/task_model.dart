@@ -43,7 +43,7 @@ class Note {
   final String userId;
   final String status;
   final String text;
-  final String tags;
+  final List tags;
   final String createdAt;
   final String updatedAt;
 
