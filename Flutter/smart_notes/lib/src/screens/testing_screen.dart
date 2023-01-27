@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_notes/src/screens/tasks_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:smart_notes/src/providers/local_storage.dart';
+
+import '../models/note.dart';
 
 class TestingScreen extends StatefulWidget {
   const TestingScreen({super.key});
@@ -15,84 +18,47 @@ class _TestingScreenState extends State<TestingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final database = Provider.of<HiveService>(context);
+
+    database.loadData();
+
+    void onPressed() => database.createItem(
+          HiveNote(
+            id: 3,
+            userId: "",
+            status: "",
+            text: "this is a test",
+            tags: "tag1, tag2, tag3",
+            createdAt: "",
+            updatedAt: "",
+          ),
+        );
+
+    final items = database.getItems();
+
     return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          showWidget
-              ? expanded
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        const FiltersWrap(),
-                        MaterialButton(
-                          onPressed: () {
-                            setState(() {
-                              expanded = !expanded;
-                            });
-                          },
-                          child: const Icon(
-                            Icons.emoji_emotions_outlined,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    )
-                  : Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        const SizedBox(
-                          width: 300,
-                          child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: FiltersWrap()),
-                        ),
-                        MaterialButton(
-                          onPressed: () {
-                            setState(() {
-                              expanded = !expanded;
-                            });
-                          },
-                          child: const Icon(
-                            Icons.expand_circle_down_outlined,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    )
-              : Container(
-                  color: Colors.purpleAccent,
-                  child: const Text('This widget is Collapsed'),
-                ),
-          MaterialButton(
-            onPressed: () {
-              setState(() {
-                showWidget = !showWidget;
-              });
-            },
-            child: const Icon(
-              Icons.close,
-              color: Colors.white,
+        appBar: AppBar(
+          actions: [
+            MaterialButton(
+              onPressed: onPressed,
+              color: Colors.purpleAccent,
+              child: const Text("Add Note"),
+            ),
+            MaterialButton(
+              child: const Icon(Icons.playlist_remove_outlined),
+              onPressed: () => database.wipeData(),
+            )
+          ],
+        ),
+        body: FutureBuilder(
+          future: items,
+          builder: (context, snapshot) => ListView.builder(
+            itemCount: snapshot.hasData ? snapshot.data?.length : 1,
+            itemBuilder: (context, index) => ListTile(
+              title: Text(snapshot.data?[index].text ?? "null"),
+              subtitle: Text(snapshot.data?[index].tags.toString() ?? "null"),
             ),
           ),
-          MaterialButton(
-            onPressed: () {
-              setState(() {
-                expanded = !expanded;
-              });
-            },
-            child: const Icon(
-              Icons.expand_circle_down_outlined,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
+        ));
   }
 }

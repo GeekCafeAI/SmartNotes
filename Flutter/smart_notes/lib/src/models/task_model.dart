@@ -70,4 +70,16 @@ class Note {
         "created_at": createdAt,
         "updated_at": updatedAt,
       };
+
+  Map<String, dynamic> toMap() {
+    return {
+      "id": id,
+      "user_id": userId,
+      "status": status,
+      "text": text,
+      "tags": tags,
+      "created_at": createdAt,
+      "updated_at": updatedAt,
+    };
+  }
 }

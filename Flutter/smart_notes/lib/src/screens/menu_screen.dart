@@ -156,6 +156,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                     note: result.note,
                                     message: _textController.text,
                                   );
+                                  // insertNote(newTask.note);
                                   tasksProvider.addTask(newTask);
                                   tasksProvider.assignTags();
                                   _textController.clear();
