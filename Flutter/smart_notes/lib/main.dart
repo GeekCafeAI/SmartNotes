@@ -3,7 +3,8 @@ import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_notes/src/app.dart';
-import 'package:smart_notes/src/models/note.dart';
+import 'package:smart_notes/src/models/hive_models/note.dart';
+import 'package:smart_notes/src/models/hive_models/tag.dart';
 import 'package:smart_notes/src/providers/settings/settings_controller.dart';
 import 'package:smart_notes/src/repositories/settings_service.dart';
 
@@ -17,9 +18,12 @@ void main() async {
   await settingsController.loadSettings();
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Setting up Hive adapters and boxes
   await Hive.initFlutter();
   Hive.registerAdapter(HiveNoteAdapter());
+  Hive.registerAdapter(HiveTagAdapter());
   await Hive.openBox("notes");
+  await Hive.openBox("tags");
 
   // Run the app and pass in the SettingsController. The app listens to the
   // SettingsController for changes, then passes it further down to the

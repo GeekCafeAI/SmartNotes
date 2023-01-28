@@ -53,6 +53,7 @@ class Tasks with ChangeNotifier {
           .where((element) => element.note.tags.contains(_enabledTags[i]))
           .toList();
     }
+
     // Add filters to list
     List<Task> sortedNotes = [];
     for (List<Task> value in filteredNotes.values) {
@@ -65,18 +66,6 @@ class Tasks with ChangeNotifier {
     _filteredNotesList = sortedNotes.toSet().toList();
     notifyListeners();
   }
-
-  // void addFiltersToList() {
-  //   List<Task> sortedNotes = [];
-  //
-  //   for (List<Task> value in filteredNotes.values) {
-  //     for (int i = 0; i < value.length; i++) {
-  //       sortedNotes.add(value[i]);
-  //     }
-  //   }
-  //   _filteredNotesList = sortedNotes.toSet().toList();
-  //   notifyListeners();
-  // }
 
   List<Task> get filteredNotesList {
     return [..._filteredNotesList];

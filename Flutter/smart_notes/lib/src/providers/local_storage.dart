@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 
-import '../models/note.dart';
+import '../models/hive_models/note.dart';
 
 class HiveService extends ChangeNotifier {
   List _notes = [];

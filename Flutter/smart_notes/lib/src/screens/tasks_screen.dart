@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:smart_notes/src/providers/tasks.dart';
 import 'package:smart_notes/src/providers/widget_visibility.dart';
 
+import '../models/hive_models/note.dart';
+import '../providers/local_storage.dart';
+
 class TasksScreen extends StatefulWidget {
   const TasksScreen({
     Key? key,
@@ -349,6 +352,24 @@ class _TasksListState extends State<TasksList> {
     final tasks = taskData.tasks;
     final enabledTags = taskData.enabledTags;
     final filteredNoteList = taskData.filteredNotesList;
+
+    final database = Provider.of<HiveService>(context);
+
+    database.loadData();
+
+    void onPressed() => database.createItem(
+          HiveNote(
+            id: 3,
+            userId: "",
+            status: "",
+            text: "this is a test",
+            tags: "tag1, tag2, tag3",
+            createdAt: "",
+            updatedAt: "",
+          ),
+        );
+
+    final items = database.getItems();
 
     if (tasks.isEmpty) {
       return SliverToBoxAdapter(

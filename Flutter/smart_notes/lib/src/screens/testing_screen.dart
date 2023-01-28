@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_notes/src/providers/local_storage.dart';
 
-import '../models/note.dart';
+import '../models/hive_models/note.dart';
 
 class TestingScreen extends StatefulWidget {
   const TestingScreen({super.key});
